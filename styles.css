@@ -4,10 +4,10 @@
 /* Consolidated visual + mobile polish */
 body{background-image:radial-gradient(circle at 20% 0,rgba(16,41,74,.94) 0,transparent 32%),linear-gradient(rgba(7,16,28,.98),rgba(7,16,28,.98));background-attachment:fixed}
 .auth-shell{position:relative;isolation:isolate;overflow:hidden}
-.auth-shell::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,rgba(4,12,22,.96) 0%,rgba(4,12,22,.88) 45%,rgba(4,12,22,.76) 100%),url('assets/football-stadium-banner-v11.jpg?v=12') center/cover no-repeat;filter:saturate(.95)}
+.auth-shell::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,rgba(4,12,22,.96) 0%,rgba(4,12,22,.88) 45%,rgba(4,12,22,.76) 100%),url('assets/college-football-100-banner-new.jpg') center/cover no-repeat;filter:saturate(.95)}
 .auth-shell::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 70% 20%,rgba(242,177,52,.13),transparent 28%)}
 .auth-card{backdrop-filter:blur(16px);background:linear-gradient(180deg,rgba(18,34,56,.94),rgba(7,19,34,.96))}
-.football-banner{height:190px;border:1px solid var(--line);border-radius:20px;margin-bottom:26px;overflow:hidden;position:relative;background:linear-gradient(90deg,rgba(5,15,27,.86),rgba(5,15,27,.28),rgba(5,15,27,.72)),url('assets/football-stadium-banner-v11.jpg?v=12') center 34%/cover no-repeat;box-shadow:var(--shadow)}
+.football-banner{height:190px;border:1px solid var(--line);border-radius:20px;margin-bottom:26px;overflow:hidden;position:relative;background:linear-gradient(90deg,rgba(5,15,27,.86),rgba(5,15,27,.28),rgba(5,15,27,.72)),url('assets/college-football-100-banner-new.jpg') center 34%/cover no-repeat;box-shadow:var(--shadow)}
 .football-banner::after{content:"";position:absolute;inset:auto 0 0;height:44%;background:linear-gradient(transparent,rgba(7,16,28,.9))}
 .football-banner-copy{position:absolute;z-index:2;left:28px;bottom:24px;display:grid;gap:5px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
 .football-banner-copy span{font-size:.68rem;font-weight:900;letter-spacing:.19em;color:var(--accent)}
@@ -19,7 +19,7 @@ body{background-image:radial-gradient(circle at 20% 0,rgba(16,41,74,.94) 0,trans
 input,select,textarea{font-size:16px}
 @media(max-width:800px){
   .auth-shell{padding:24px 16px 36px;align-content:center;gap:24px;background-position:center}
-  .auth-shell::before{background:linear-gradient(180deg,rgba(4,12,22,.80) 0%,rgba(4,12,22,.97) 44%,rgba(4,12,22,.99) 100%),url('assets/football-stadium-banner-v11.jpg?v=12') center top/auto 48vh no-repeat}
+  .auth-shell::before{background:linear-gradient(180deg,rgba(4,12,22,.80) 0%,rgba(4,12,22,.97) 44%,rgba(4,12,22,.99) 100%),url('assets/college-football-100-banner-new.jpg') center top/auto 48vh no-repeat}
   .brand-block{padding-top:22vh}
   .brand-block h1{font-size:clamp(3rem,15vw,4.8rem);margin-bottom:1rem}
   .brand-block>p{font-size:1rem;line-height:1.55}
@@ -73,15 +73,15 @@ input,select,textarea{font-size:16px}
 }
 
 /* Home dashboard + privacy-safe revealed picks */
-.home-hero{min-height:330px;border:1px solid var(--line);border-radius:22px;margin-bottom:20px;padding:38px;display:flex;align-items:flex-end;justify-content:space-between;gap:28px;position:relative;overflow:hidden;background:linear-gradient(90deg,rgba(4,12,22,.96) 0%,rgba(4,12,22,.78) 45%,rgba(4,12,22,.35) 100%),url('assets/football-stadium-banner-v11.jpg?v=12') center/cover no-repeat;box-shadow:var(--shadow)}
+.home-hero{min-height:330px;border:1px solid var(--line);border-radius:22px;margin-bottom:20px;padding:38px;display:flex;align-items:flex-end;justify-content:space-between;gap:28px;position:relative;overflow:hidden;background:linear-gradient(90deg,rgba(4,12,22,.96) 0%,rgba(4,12,22,.78) 45%,rgba(4,12,22,.35) 100%),url('assets/college-football-100-banner-new.jpg') center/cover no-repeat;box-shadow:var(--shadow)}
 .home-hero-copy{max-width:610px;position:relative;z-index:2}.home-hero h2{font-size:clamp(2.3rem,5vw,4.4rem);letter-spacing:-.05em;margin:.3rem 0 .6rem}.home-hero p{color:#c5d0dd;font-size:1.02rem}.home-cta{margin-top:18px;padding:13px 18px}
 .home-score-card{min-width:210px;padding:20px;border:1px solid rgba(255,255,255,.15);border-radius:16px;background:rgba(4,12,22,.72);backdrop-filter:blur(10px);position:relative;z-index:2}.home-score-card>span,.panel-kicker{font-size:.67rem;font-weight:900;letter-spacing:.16em;color:var(--accent)}.home-score-card>strong{display:block;font-size:4rem;line-height:1;color:var(--accent);margin:8px 0 3px}.home-score-card>small{color:var(--muted)}
 .commissioner-message{padding:15px 18px;margin-bottom:18px;display:flex;gap:12px;align-items:center}.commissioner-message strong{color:var(--accent);white-space:nowrap}.commissioner-message span{color:#d6e0eb}
 .home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.home-panel{padding:20px}.home-panel h3{margin:5px 0 16px}.home-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.home-stat-grid>div{padding:13px 10px;background:#091725;border:1px solid var(--line);border-radius:11px}.home-stat-grid strong{display:block;font-size:1.45rem;color:var(--text)}.home-stat-grid span{display:block;color:var(--muted);font-size:.72rem;margin-top:3px}.home-upcoming,.home-leaders{display:grid;gap:8px;margin-bottom:16px}.upcoming-row,.leader-row,.revealed-pick{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:10px;background:#091725}.upcoming-row div,.revealed-pick>div{display:grid;gap:3px}.upcoming-row span,.revealed-pick span,.upcoming-row small,.revealed-pick small{color:var(--muted);font-size:.72rem}.leader-row{display:grid;grid-template-columns:28px 1fr auto}.leader-row>span{color:var(--accent);font-weight:900}.leader-row b{font-size:1.1rem}.home-empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:10px}
 .player-picks-link{border:0;background:none;color:var(--text);font:inherit;font-weight:800;padding:0;text-decoration:underline;text-decoration-color:#45617e;text-underline-offset:4px;cursor:pointer}.player-picks-link:hover{color:var(--accent)}.player-picks-modal{max-width:720px}.revealed-picks{display:grid;gap:9px;margin-top:16px}.revealed-pick>div:last-child{text-align:right}.revealed-pick b{font-size:.7rem;margin-top:4px}.result-correct{color:var(--accent2)}.result-incorrect{color:var(--danger)}.result-pending{color:var(--accent)}
 /* Show more of the artwork instead of cutting off its top. */
-.football-banner{height:auto;min-height:190px;aspect-ratio:1800/540;background:linear-gradient(90deg,rgba(5,15,27,.86),rgba(5,15,27,.20),rgba(5,15,27,.68)),url('assets/football-stadium-banner-v11.jpg?v=12') center top/100% auto no-repeat;background-color:#07101c}
-@media(max-width:800px){.topbar nav{grid-template-columns:repeat(5,1fr)}.home-hero{min-height:360px;padding:22px;align-items:flex-end;flex-direction:column;justify-content:flex-end;background:linear-gradient(180deg,rgba(4,12,22,.22),rgba(4,12,22,.95) 68%),url('assets/football-stadium-banner-v11.jpg?v=12') center top/auto 58% no-repeat;background-color:#07101c}.home-hero-copy{padding-top:110px}.home-hero h2{font-size:2.4rem}.home-score-card{width:100%;min-width:0}.home-grid{grid-template-columns:1fr}.commissioner-message{align-items:flex-start;flex-direction:column}.football-banner{min-height:0;height:auto;aspect-ratio:1800/540;background-size:100% auto;background-position:center top}.football-banner-copy{bottom:12px}.nav-btn{font-size:.68rem}.revealed-pick{align-items:flex-start}.revealed-pick>div:last-child{min-width:105px}}
+.football-banner{height:auto;min-height:190px;aspect-ratio:1800/540;background:linear-gradient(90deg,rgba(5,15,27,.86),rgba(5,15,27,.20),rgba(5,15,27,.68)),url('assets/college-football-100-banner-new.jpg') center top/100% auto no-repeat;background-color:#07101c}
+@media(max-width:800px){.topbar nav{grid-template-columns:repeat(5,1fr)}.home-hero{min-height:360px;padding:22px;align-items:flex-end;flex-direction:column;justify-content:flex-end;background:linear-gradient(180deg,rgba(4,12,22,.22),rgba(4,12,22,.95) 68%),url('assets/college-football-100-banner-new.jpg') center top/auto 58% no-repeat;background-color:#07101c}.home-hero-copy{padding-top:110px}.home-hero h2{font-size:2.4rem}.home-score-card{width:100%;min-width:0}.home-grid{grid-template-columns:1fr}.commissioner-message{align-items:flex-start;flex-direction:column}.football-banner{min-height:0;height:auto;aspect-ratio:1800/540;background-size:100% auto;background-position:center top}.football-banner-copy{bottom:12px}.nav-btn{font-size:.68rem}.revealed-pick{align-items:flex-start}.revealed-pick>div:last-child{min-width:105px}}
 @media(max-width:420px){.home-hero{min-height:340px}.home-stat-grid{gap:6px}.home-stat-grid>div{padding:11px 7px}.home-stat-grid strong{font-size:1.25rem}.home-stat-grid span{font-size:.65rem}.football-banner{height:auto}}
 
 /* 2026-09-04 consolidated artwork + commissioner administration */
@@ -89,7 +89,7 @@ input,select,textarea{font-size:16px}
   aspect-ratio:10/3;
   height:auto;
   min-height:0;
-  background-image:linear-gradient(90deg,rgba(5,15,27,.82),rgba(5,15,27,.14),rgba(5,15,27,.58)),url('assets/football-stadium-banner-v11.jpg?v=12');
+  background-image:linear-gradient(90deg,rgba(5,15,27,.82),rgba(5,15,27,.14),rgba(5,15,27,.58)),url('assets/college-football-100-banner-new.jpg');
   background-position:center top;
   background-size:100% 100%;
   background-repeat:no-repeat;
@@ -511,7 +511,7 @@ input,select,textarea{font-size:16px}
   height: auto !important;
   min-height: 0 !important;
   aspect-ratio: 15 / 4 !important; /* 1800 x 480 source artwork */
-  background-image: url('assets/football-stadium-banner-v11.jpg?v=12') !important;
+  background-image: url('assets/college-football-100-banner-new.jpg') !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-size: 100% 100% !important;
@@ -528,8 +528,36 @@ input,select,textarea{font-size:16px}
     height: auto !important;
     min-height: 0 !important;
     aspect-ratio: 15 / 4 !important;
-    background-image: url('assets/football-stadium-banner-v11.jpg?v=12') !important;
+    background-image: url('assets/college-football-100-banner-new.jpg') !important;
     background-position: center center !important;
     background-size: 100% 100% !important;
+  }
+}
+
+
+/* =========================================================
+   V13 FINAL BANNER — UNIQUE FILE NAME
+   Keep this block last.
+   ========================================================= */
+.football-banner {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 15 / 4 !important;
+  background-image: url('assets/college-football-100-banner-new.jpg') !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: 100% 100% !important;
+  background-color: #07101c !important;
+}
+.football-banner::after {
+  display: none !important;
+}
+@media (max-width: 800px) {
+  .football-banner {
+    background-image: url('assets/college-football-100-banner-new.jpg') !important;
+    background-position: center center !important;
+    background-size: 100% 100% !important;
+    aspect-ratio: 15 / 4 !important;
   }
 }

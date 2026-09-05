@@ -34,18 +34,28 @@ async function boot(){
     showAuth();
     toast('Could not connect to the database.');
   }
-  sb.auth.onAuthStateChange((_event,session)=>{
-    // Defer database work until after Supabase finishes the auth callback.
+  sb.auth.onAuthStateChange((event,session)=>{
+    // Supabase may refresh the auth token when the browser tab regains focus.
+    // A token refresh must NOT rebuild the app or change the page the player is viewing.
     setTimeout(async()=>{
       try {
-        if(session?.user){
-          state.user=session.user;
-          await loadApp();
-        } else {
+        if(event==='SIGNED_OUT' || !session?.user){
           state.user=null;
           state.profile=null;
           showAuth();
+          return;
         }
+
+        state.user=session.user;
+
+        // These events only update credentials/user data. Leave the current UI untouched.
+        if(event==='TOKEN_REFRESHED' || event==='USER_UPDATED') return;
+
+        // INITIAL_SESSION / SIGNED_IN can fire even when an already-loaded tab is
+        // simply becoming active again. Do not reinitialize a visible app.
+        if(state.profile && $('appView') && !$('appView').hidden) return;
+
+        await loadApp();
       } catch(err){
         console.error(err);
         toast(err?.message || 'Authentication error.');

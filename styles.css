@@ -380,3 +380,43 @@ input,select,textarea{font-size:16px}
     font-size: .64rem !important;
   }
 }
+
+
+/* v7 — hard portrait navigation fallback.
+   This is a separate navigation row in the DOM. JavaScript explicitly shows it
+   whenever the viewport is portrait, so it does not depend on CSS orientation
+   media-query detection. */
+.portrait-nav{
+  width:100%;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:5px;
+  padding:8px 10px 9px;
+  background:#081320;
+  border-bottom:1px solid var(--line);
+  position:relative;
+  z-index:25;
+}
+.portrait-nav[hidden]{display:none!important}
+.portrait-nav .portrait-nav-btn{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:42px!important;
+  padding:9px 4px!important;
+  border:1px solid #20344d!important;
+  border-radius:8px!important;
+  background:#0d1928!important;
+  color:#c7d3df!important;
+  font-size:.72rem!important;
+  font-weight:800!important;
+  text-align:center!important;
+  white-space:normal!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+.portrait-nav .portrait-nav-btn.active{
+  background:#1a3049!important;
+  color:#fff!important;
+  border-color:#3b5673!important;
+}
+.portrait-nav .portrait-nav-btn[hidden]{display:none!important}

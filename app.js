@@ -13,12 +13,27 @@ const demoGames = [
 function toast(msg){ const t=$('toast');t.textContent=msg;t.hidden=false;clearTimeout(window._toast);window._toast=setTimeout(()=>t.hidden=true,3400); }
 function fmtSpread(v){ if(v===null||v===undefined||v==='')return '—'; return Number(v)>0?`+${Number(v).toFixed(1)}`:Number(v).toFixed(1); }
 function locked(g){ return g.status!=='scheduled' || Date.now()>=new Date(g.kickoff).getTime(); }
-function showApp(){ $('authView').hidden=true;$('appView').hidden=false;$('userName').textContent=state.profile?.display_name||state.user?.email||'Player';$('commissionerNav').hidden=state.profile?.role!=='commissioner';switchPage(state.currentPage||'home'); }
+function updatePortraitNav(){
+  const nav=$('portraitNav'); if(!nav)return;
+  const vv=window.visualViewport;
+  const w=Math.round(vv?.width||window.innerWidth||document.documentElement.clientWidth||0);
+  const h=Math.round(vv?.height||window.innerHeight||document.documentElement.clientHeight||0);
+  const portrait=(h>=w)||(window.matchMedia&&window.matchMedia('(orientation: portrait)').matches);
+  // This is intentionally JS-driven rather than CSS-only. Some mobile browsers
+  // were not applying the earlier portrait media rules reliably on this site.
+  nav.hidden=!portrait;
+  nav.style.display=portrait?'grid':'none';
+}
+function showApp(){ $('authView').hidden=true;$('appView').hidden=false;$('userName').textContent=state.profile?.display_name||state.user?.email||'Player';const isCommissioner=state.profile?.role==='commissioner';$('commissionerNav').hidden=!isCommissioner;if($('commissionerPortraitNav'))$('commissionerPortraitNav').hidden=!isCommissioner;updatePortraitNav();switchPage(state.currentPage||'home'); }
 function showAuth(){ $('authView').hidden=false;$('appView').hidden=true; }
 function switchPage(name){ const target=$(`${name}Page`)?name:'home';state.currentPage=target;try{sessionStorage.setItem('cfb100CurrentPage',target);}catch(e){};document.querySelectorAll('.page').forEach(p=>p.hidden=true);$(`${target}Page`).hidden=false;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===target));if(target==='home')renderHome();if(target==='standings')renderStandings();if(target==='history')renderHistory();if(target==='rules')renderRules();if(target==='commissioner')renderCommissioner(); }
 function setAuthTab(tab){document.querySelectorAll('[data-auth-tab]').forEach(b=>b.classList.toggle('active',b.dataset.authTab===tab));$('signInForm').hidden=tab!=='signin';$('signUpForm').hidden=tab!=='signup';}
 async function boot(){
   bindEvents();
+  updatePortraitNav();
+  window.addEventListener('resize', updatePortraitNav);
+  window.addEventListener('orientationchange', ()=>setTimeout(updatePortraitNav,100));
+  if(window.visualViewport) window.visualViewport.addEventListener('resize', updatePortraitNav);
   if(!configured) return showAuth();
   try {
     const {data:{session}, error} = await sb.auth.getSession();

@@ -2,7 +2,7 @@ const CFG = window.PICKEM_CONFIG || {};
 const configured = CFG.SUPABASE_URL && !CFG.SUPABASE_URL.includes('YOUR_') && CFG.SUPABASE_ANON_KEY && !CFG.SUPABASE_ANON_KEY.includes('YOUR_');
 const sb = configured ? window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY) : null;
 const $ = id => document.getElementById(id);
-const state = { user:null, profile:null, seasons:[], weeks:[], games:[], picks:[], entries:[], standings:[], activeEntry:null, currentSeason:null, currentWeek:null, rules:null, seasonSettings:null, entryGateMessage:'', demo:false, adminPlayers:[], adminSelectedPlayer:null, adminSelectedEntries:[] };
+const state = { user:null, profile:null, seasons:[], weeks:[], games:[], picks:[], entries:[], standings:[], activeEntry:null, currentSeason:null, currentWeek:null, rules:null, seasonSettings:null, entryGateMessage:'', demo:false, adminPlayers:[], adminSelectedPlayer:null, adminSelectedEntries:[], currentPage:'home' };
 const demoGames = [
   {id:'d1',week_id:'dw1',away_team:'Texas',home_team:'Ohio State',away_spread:2.5,home_spread:-2.5,kickoff:new Date(Date.now()+86400000).toISOString(),network:'ABC',status:'scheduled'},
   {id:'d2',week_id:'dw1',away_team:'Clemson',home_team:'LSU',away_spread:4.5,home_spread:-4.5,kickoff:new Date(Date.now()+90000000).toISOString(),network:'ESPN',status:'scheduled'},
@@ -12,9 +12,9 @@ const demoGames = [
 function toast(msg){ const t=$('toast');t.textContent=msg;t.hidden=false;clearTimeout(window._toast);window._toast=setTimeout(()=>t.hidden=true,3400); }
 function fmtSpread(v){ if(v===null||v===undefined||v==='')return '—'; return Number(v)>0?`+${Number(v).toFixed(1)}`:Number(v).toFixed(1); }
 function locked(g){ return g.status!=='scheduled' || Date.now()>=new Date(g.kickoff).getTime(); }
-function showApp(){ $('authView').hidden=true;$('appView').hidden=false;$('userName').textContent=state.profile?.display_name||state.user?.email||'Player';$('commissionerNav').hidden=state.profile?.role!=='commissioner';switchPage('home'); }
+function showApp(){ $('authView').hidden=true;$('appView').hidden=false;$('userName').textContent=state.profile?.display_name||state.user?.email||'Player';$('commissionerNav').hidden=state.profile?.role!=='commissioner';switchPage(state.currentPage||'home'); }
 function showAuth(){ $('authView').hidden=false;$('appView').hidden=true; }
-function switchPage(name){ document.querySelectorAll('.page').forEach(p=>p.hidden=true);$(`${name}Page`).hidden=false;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));if(name==='home')renderHome();if(name==='standings')renderStandings();if(name==='history')renderHistory();if(name==='rules')renderRules();if(name==='commissioner')renderCommissioner(); }
+function switchPage(name){ const target=$(`${name}Page`)?name:'home';state.currentPage=target;document.querySelectorAll('.page').forEach(p=>p.hidden=true);$(`${target}Page`).hidden=false;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===target));if(target==='home')renderHome();if(target==='standings')renderStandings();if(target==='history')renderHistory();if(target==='rules')renderRules();if(target==='commissioner')renderCommissioner(); }
 function setAuthTab(tab){document.querySelectorAll('[data-auth-tab]').forEach(b=>b.classList.toggle('active',b.dataset.authTab===tab));$('signInForm').hidden=tab!=='signin';$('signUpForm').hidden=tab!=='signup';}
 async function boot(){
   bindEvents();

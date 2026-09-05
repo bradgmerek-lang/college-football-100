@@ -663,3 +663,80 @@ input,select,textarea{font-size:16px}
     height: auto !important;
   }
 }
+
+
+/* =========================================================
+   V17 — HOME COPY CLEAR OF ARTWORK + ORIGINAL PICKS BANNER
+   Keep this block last.
+   ========================================================= */
+
+/* HOME: keep the banner artwork unobstructed. The welcome content becomes
+   a normal card directly beneath the hero rather than sitting on top of it. */
+#homePage .home-hero {
+  position: relative !important;
+  overflow: visible !important;
+  margin-bottom: 0 !important;
+}
+
+#homePage .home-hero-copy {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 100% !important;
+  bottom: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 12px 0 0 !important;
+  padding: 16px 18px !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  border-radius: 14px !important;
+  background: linear-gradient(180deg,rgba(18,34,56,.98),rgba(10,23,39,.98)) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.24) !important;
+  text-shadow: none !important;
+  z-index: 2 !important;
+}
+
+#homePage .home-hero-copy h2 {
+  margin: 3px 0 5px !important;
+}
+
+#homePage .home-hero-copy p {
+  margin: 0 0 12px !important;
+}
+
+#homePage .home-score-strip {
+  margin-top: 150px !important;
+}
+
+/* PICKS: use the earlier sharp/original stadium banner, not the later
+   screenshot-derived banner. */
+#picksPage .football-banner {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 15 / 4 !important;
+  background-image: url('assets/picks-banner-original.jpg') !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: 100% 100% !important;
+}
+
+#picksPage .football-banner::after {
+  display: none !important;
+}
+
+@media (max-width: 800px) {
+  #homePage .home-hero-copy {
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+  #homePage .home-score-strip {
+    margin-top: 175px !important;
+  }
+  #picksPage .football-banner {
+    background-image: url('assets/picks-banner-original.jpg') !important;
+    background-size: 100% 100% !important;
+    background-position: center center !important;
+    aspect-ratio: 15 / 4 !important;
+  }
+}

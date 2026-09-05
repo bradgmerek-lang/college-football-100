@@ -110,8 +110,28 @@ async function renderHome(){if(!$('homePage'))return;const wins=state.activeEntr
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
 async function loadHomeLeaders(){if(state.demo){state.standings=[{user_id:'demo',display_name:'Brad',current_wins:12,best_wins:12,entry_count:1,status:'active'},{user_id:'d2',display_name:'Jordan',current_wins:9,best_wins:18,entry_count:2,status:'active'}];}else if(state.currentSeason){const {data}=await sb.rpc('get_standings',{p_season_id:state.currentSeason.id});state.standings=data||[];}$('homeLeaders').innerHTML=(state.standings||[]).slice(0,5).map((x,i)=>`<div class="leader-row"><span>${i+1}</span><strong>${escapeHtml(x.display_name)}</strong><b>${x.current_wins}</b></div>`).join('')||'<div class="home-empty">Standings will appear here.</div>';}
 function pickedFor(gameId){return state.picks.find(p=>p.game_id===gameId);}
-function renderGames(){ const filter=$('gameFilter').value;let arr=state.games;if(filter==='open')arr=arr.filter(g=>!locked(g));if(filter==='picked')arr=arr.filter(g=>pickedFor(g.id));$('emptyGames').hidden=arr.length>0;$('gamesGrid').innerHTML=arr.map(g=>{const p=pickedFor(g.id),isLocked=locked(g);return `<article class="game-card card"><div class="game-head"><span>${new Date(g.kickoff).toLocaleString([], {weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}${g.network?' · '+g.network:''}</span><span class="${isLocked?'locked':''}">${isLocked?'LOCKED':'OPEN'}</span></div><div class="matchup">${teamRow(g,'away',p,isLocked)}${teamRow(g,'home',p,isLocked)}</div><div class="game-foot"><span>Opening line</span><span class="${p?'saved':''}">${p?'✓ Pick saved':'No pick'}</span></div></article>`}).join(''); }
-function teamRow(g,side,p,isLocked){const team=g[`${side}_team`],spread=g[`${side}_spread`],selected=p?.selected_side===side,disabled=isLocked||!state.activeEntry;return `<label class="team-option ${selected?'selected':''} ${disabled?'disabled':''}"><input type="radio" name="game_${g.id}" data-game="${g.id}" data-side="${side}" ${selected?'checked':''} ${disabled?'disabled':''}><span class="team-name">${team}</span><span class="spread">${fmtSpread(spread)}</span></label>`;}
+function renderGames(){
+  const filter=$('gameFilter').value;
+  let arr=state.games;
+  if(filter==='open')arr=arr.filter(g=>!locked(g));
+  if(filter==='picked')arr=arr.filter(g=>pickedFor(g.id));
+  $('emptyGames').hidden=arr.length>0;
+  $('gamesGrid').innerHTML=arr.map(g=>{
+    const p=pickedFor(g.id),isLocked=locked(g);
+    const kickoff=new Date(g.kickoff).toLocaleString([], {weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+    return `<article class="game-card card ${p?'has-pick':''}">
+      <div class="game-head"><span class="game-time">${kickoff}${g.network?`<b> · ${escapeHtml(g.network)}</b>`:''}</span><span class="game-state ${isLocked?'locked':'open'}">${isLocked?'LOCKED':'OPEN'}</span></div>
+      <div class="matchup">${teamRow(g,'away',p,isLocked)}<div class="matchup-divider"><span>@</span></div>${teamRow(g,'home',p,isLocked)}</div>
+      <div class="game-foot"><span>Opening line</span><span class="${p?'saved':''}">${p?'✓ Pick saved':'Select a team'}</span></div>
+    </article>`;
+  }).join('');
+}
+function teamRow(g,side,p,isLocked){
+  const team=g[`${side}_team`],spread=g[`${side}_spread`],logo=g[`${side}_logo_url`],selected=p?.selected_side===side,disabled=isLocked||!state.activeEntry;
+  const initial=escapeHtml(String(team||'?').trim().charAt(0).toUpperCase()||'?');
+  const logoHtml=logo?`<span class="team-logo-wrap"><img class="team-logo" src="${escapeHtml(logo)}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="team-logo-fallback">${initial}</span></span>`:`<span class="team-logo-wrap"><span class="team-logo-fallback" style="display:grid">${initial}</span></span>`;
+  return `<label class="team-option ${selected?'selected':''} ${disabled?'disabled':''}"><input type="radio" name="game_${g.id}" data-game="${g.id}" data-side="${side}" ${selected?'checked':''} ${disabled?'disabled':''}>${logoHtml}<span class="team-copy"><span class="team-name">${escapeHtml(team)}</span><small>${side==='away'?'AWAY':'HOME'}</small></span><span class="spread">${fmtSpread(spread)}</span><span class="pick-indicator">${selected?'PICKED':'PICK'}</span></label>`;
+}
 async function savePick(gameId,side){
   const g=state.games.find(x=>x.id===gameId);
   if(!g||locked(g))return toast('That game is locked.');

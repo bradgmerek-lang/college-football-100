@@ -740,3 +740,56 @@ input,select,textarea{font-size:16px}
     aspect-ratio: 15 / 4 !important;
   }
 }
+
+/* Picks page refresh: logo-forward matchup cards */
+#picksPage .hero-row{margin-bottom:18px}
+#picksPage .toolbar{background:linear-gradient(180deg,rgba(15,31,51,.98),rgba(8,20,34,.98));border-color:#29415f;box-shadow:0 14px 40px rgba(0,0,0,.18)}
+#picksPage .requirements{background:linear-gradient(135deg,rgba(242,177,52,.07),rgba(10,23,39,.98) 42%);border-color:rgba(242,177,52,.24)}
+#picksPage .games-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#picksPage .game-card{position:relative;border-radius:16px;border-color:#29405c;background:linear-gradient(180deg,#102039 0%,#0a1728 100%);box-shadow:0 12px 32px rgba(0,0,0,.2);transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease}
+#picksPage .game-card:hover{border-color:#3d5d81;transform:translateY(-1px);box-shadow:0 16px 38px rgba(0,0,0,.27)}
+#picksPage .game-card.has-pick{border-color:rgba(242,177,52,.62);box-shadow:0 0 0 1px rgba(242,177,52,.08),0 14px 36px rgba(0,0,0,.25)}
+#picksPage .game-card.has-pick::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);z-index:2}
+#picksPage .game-head{min-height:42px;padding:10px 13px;background:rgba(4,13,24,.62);align-items:center;border-bottom-color:#223a56}
+#picksPage .game-time{font-weight:750;letter-spacing:.01em;color:#aebed0}
+#picksPage .game-time b{color:#d8e2ed;font-weight:850}
+#picksPage .game-state{font-size:.61rem;letter-spacing:.12em;font-weight:950;padding:5px 8px;border-radius:999px;border:1px solid currentColor}
+#picksPage .game-state.open{color:#6be0a8;background:rgba(107,224,168,.06)}
+#picksPage .game-state.locked{color:#ff8d96;background:rgba(255,107,116,.06)}
+#picksPage .matchup{padding:8px 11px 7px}
+#picksPage .matchup-divider{height:1px;background:#203750;position:relative;margin:0 7px}
+#picksPage .matchup-divider span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#0d1b2e;color:#6f849b;padding:0 7px;font-size:.58rem;font-weight:950;letter-spacing:.08em}
+#picksPage .team-option{grid-template-columns:22px 46px minmax(0,1fr) auto auto;gap:10px;min-height:68px;padding:8px 9px;margin:4px 0;border:1px solid transparent;border-radius:12px;background:rgba(255,255,255,.015)}
+#picksPage .team-option:last-child{border-bottom:1px solid transparent}
+#picksPage .team-option:hover:not(.disabled){background:#142842;border-color:#2b4969}
+#picksPage .team-option.selected{background:linear-gradient(90deg,rgba(242,177,52,.15),rgba(242,177,52,.045));border-color:rgba(242,177,52,.48)}
+#picksPage .team-option.disabled{cursor:default;opacity:.76}
+#picksPage .team-option input{width:18px;height:18px;margin:0}
+#picksPage .team-logo-wrap{width:44px;height:44px;display:grid;place-items:center;position:relative;flex:none}
+#picksPage .team-logo{display:block;width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))}
+#picksPage .team-logo-fallback{display:none;width:38px;height:38px;place-items:center;border-radius:50%;background:#1a3049;border:1px solid #36526f;color:#b9c9da;font-weight:900}
+#picksPage .team-copy{min-width:0;display:grid;gap:2px}
+#picksPage .team-copy .team-name{font-size:.96rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#picksPage .team-copy small{font-size:.55rem;color:#71879e;font-weight:900;letter-spacing:.13em}
+#picksPage .spread{min-width:48px;text-align:right;font-size:1rem;color:#e3ebf4;font-variant-numeric:tabular-nums}
+#picksPage .pick-indicator{min-width:48px;text-align:center;padding:5px 6px;border-radius:7px;border:1px solid #2b4563;color:#7790aa;font-size:.57rem;font-weight:950;letter-spacing:.08em}
+#picksPage .team-option.selected .pick-indicator{background:var(--accent);border-color:var(--accent);color:#111820}
+#picksPage .game-foot{padding:9px 13px;background:rgba(4,13,24,.42);border-top-color:#223a56}
+#picksPage .game-foot .saved{font-weight:900;color:#ffd46f}
+@media(max-width:800px){
+  #picksPage .games-grid{grid-template-columns:1fr;gap:11px}
+  #picksPage .game-card:hover{transform:none}
+  #picksPage .team-option{grid-template-columns:22px 42px minmax(0,1fr) auto;min-height:64px;gap:9px;padding:7px 8px}
+  #picksPage .team-logo-wrap{width:40px;height:40px}
+  #picksPage .team-logo{width:38px;height:38px}
+  #picksPage .pick-indicator{display:none}
+  #picksPage .team-copy .team-name{font-size:.93rem}
+  #picksPage .spread{min-width:44px;font-size:.94rem}
+}
+@media(max-width:420px){
+  #picksPage .team-option{grid-template-columns:20px 38px minmax(0,1fr) auto;gap:7px}
+  #picksPage .team-logo-wrap{width:36px;height:36px}
+  #picksPage .team-logo{width:34px;height:34px}
+  #picksPage .team-copy .team-name{font-size:.88rem}
+  #picksPage .game-head{padding:9px 10px}
+}

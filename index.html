@@ -8,7 +8,60 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=9" />
+  <style>
+    /* v9: forced visual polish; inline so browser CSS caching cannot hide the change */
+    .home-score-strip{
+      position:static !important;
+      width:100% !important;
+      min-width:0 !important;
+      margin:12px 0 20px !important;
+      padding:12px 16px !important;
+      display:grid !important;
+      grid-template-columns:auto auto auto minmax(180px,1fr) !important;
+      align-items:center !important;
+      gap:10px 14px !important;
+      background:linear-gradient(180deg,rgba(18,34,56,.98),rgba(10,23,39,.98)) !important;
+      backdrop-filter:none !important;
+      z-index:auto !important;
+    }
+    .home-score-strip>span{white-space:nowrap !important;}
+    .home-score-strip>strong{font-size:2rem !important;line-height:1 !important;margin:0 !important;}
+    .home-score-strip>small{white-space:nowrap !important;color:#c7d3df !important;}
+    .home-score-strip>.progress-track{width:100% !important;margin:0 !important;}
+
+    @media (min-width:801px){
+      .football-banner-copy{
+        left:28px !important;
+        bottom:22px !important;
+        padding:14px 18px !important;
+        border-radius:12px !important;
+        background:rgba(3,10,19,.88) !important;
+        border:1px solid rgba(255,211,111,.48) !important;
+        border-left:4px solid #f2b134 !important;
+        box-shadow:0 10px 30px rgba(0,0,0,.42) !important;
+        text-shadow:0 2px 8px rgba(0,0,0,1) !important;
+      }
+      .football-banner-copy span{color:#ffd36f !important;font-weight:900 !important;}
+      .football-banner-copy strong{
+        color:#fff !important;
+        font-size:clamp(1.8rem,3vw,2.55rem) !important;
+        font-weight:900 !important;
+        letter-spacing:-.03em !important;
+        opacity:1 !important;
+      }
+    }
+
+    @media (max-width:800px){
+      .home-score-strip{
+        grid-template-columns:auto 1fr !important;
+        padding:12px 14px !important;
+      }
+      .home-score-strip>strong{justify-self:end !important;font-size:1.8rem !important;}
+      .home-score-strip>small,.home-score-strip>.progress-track{grid-column:1 / -1 !important;}
+      .home-score-strip>small{white-space:normal !important;}
+    }
+  </style>
 </head>
 <body>
   <div id="toast" class="toast" hidden></div>
@@ -70,7 +123,7 @@
             <button id="homeMakePicks" class="primary home-cta">Make This Week's Picks</button>
           </div>
         </div>
-        <div class="home-score-card card">
+        <div class="home-score-card home-score-strip card">
           <span>ROAD TO 100</span>
           <strong id="homeWins">0</strong>
           <small>wins on current run</small>

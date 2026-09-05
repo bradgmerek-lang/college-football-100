@@ -243,3 +243,51 @@ input,select,textarea{font-size:16px}
   .container { padding-left: 8px; padding-right: 8px; }
   .auth-shell { padding-left: 10px; padding-right: 10px; }
 }
+
+/* 2026-09-05 v5: portrait phones keep the full site navigation visible at the TOP.
+   Landscape keeps the existing mobile navigation behavior. */
+@media (max-width: 600px) and (orientation: portrait) {
+  .topbar {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    row-gap: 6px;
+    min-height: 0;
+    padding: 8px 8px 6px;
+  }
+
+  .topbar > div:first-child { grid-column: 1; grid-row: 1; }
+  .topbar .user-menu { grid-column: 2; grid-row: 1; }
+
+  .topbar nav {
+    position: static;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 4px;
+    overflow: visible;
+    background: transparent;
+    border-top: 1px solid var(--line);
+    padding: 6px 0 0;
+  }
+
+  .topbar nav .nav-btn {
+    display: block;
+    min-width: 0;
+    width: 100%;
+    min-height: 38px;
+    padding: 8px 3px;
+    font-size: .66rem;
+    line-height: 1.1;
+    white-space: normal;
+    text-align: center;
+  }
+
+  /* Navigation is no longer at the bottom in portrait, so reclaim that space. */
+  .container {
+    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+  }
+}

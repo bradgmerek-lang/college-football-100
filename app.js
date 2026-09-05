@@ -2,7 +2,8 @@ const CFG = window.PICKEM_CONFIG || {};
 const configured = CFG.SUPABASE_URL && !CFG.SUPABASE_URL.includes('YOUR_') && CFG.SUPABASE_ANON_KEY && !CFG.SUPABASE_ANON_KEY.includes('YOUR_');
 const sb = configured ? window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY) : null;
 const $ = id => document.getElementById(id);
-const state = { user:null, profile:null, seasons:[], weeks:[], games:[], picks:[], entries:[], standings:[], activeEntry:null, currentSeason:null, currentWeek:null, rules:null, seasonSettings:null, entryGateMessage:'', demo:false, adminPlayers:[], adminSelectedPlayer:null, adminSelectedEntries:[], currentPage:'home' };
+const savedPage = (()=>{ try { return sessionStorage.getItem('cfb100CurrentPage') || 'home'; } catch(e) { return 'home'; } })();
+const state = { user:null, profile:null, seasons:[], weeks:[], games:[], picks:[], entries:[], standings:[], activeEntry:null, currentSeason:null, currentWeek:null, rules:null, seasonSettings:null, entryGateMessage:'', demo:false, adminPlayers:[], adminSelectedPlayer:null, adminSelectedEntries:[], currentPage:savedPage };
 const demoGames = [
   {id:'d1',week_id:'dw1',away_team:'Texas',home_team:'Ohio State',away_spread:2.5,home_spread:-2.5,kickoff:new Date(Date.now()+86400000).toISOString(),network:'ABC',status:'scheduled'},
   {id:'d2',week_id:'dw1',away_team:'Clemson',home_team:'LSU',away_spread:4.5,home_spread:-4.5,kickoff:new Date(Date.now()+90000000).toISOString(),network:'ESPN',status:'scheduled'},
@@ -14,7 +15,7 @@ function fmtSpread(v){ if(v===null||v===undefined||v==='')return '—'; return N
 function locked(g){ return g.status!=='scheduled' || Date.now()>=new Date(g.kickoff).getTime(); }
 function showApp(){ $('authView').hidden=true;$('appView').hidden=false;$('userName').textContent=state.profile?.display_name||state.user?.email||'Player';$('commissionerNav').hidden=state.profile?.role!=='commissioner';switchPage(state.currentPage||'home'); }
 function showAuth(){ $('authView').hidden=false;$('appView').hidden=true; }
-function switchPage(name){ const target=$(`${name}Page`)?name:'home';state.currentPage=target;document.querySelectorAll('.page').forEach(p=>p.hidden=true);$(`${target}Page`).hidden=false;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===target));if(target==='home')renderHome();if(target==='standings')renderStandings();if(target==='history')renderHistory();if(target==='rules')renderRules();if(target==='commissioner')renderCommissioner(); }
+function switchPage(name){ const target=$(`${name}Page`)?name:'home';state.currentPage=target;try{sessionStorage.setItem('cfb100CurrentPage',target);}catch(e){};document.querySelectorAll('.page').forEach(p=>p.hidden=true);$(`${target}Page`).hidden=false;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===target));if(target==='home')renderHome();if(target==='standings')renderStandings();if(target==='history')renderHistory();if(target==='rules')renderRules();if(target==='commissioner')renderCommissioner(); }
 function setAuthTab(tab){document.querySelectorAll('[data-auth-tab]').forEach(b=>b.classList.toggle('active',b.dataset.authTab===tab));$('signInForm').hidden=tab!=='signin';$('signUpForm').hidden=tab!=='signup';}
 async function boot(){
   bindEvents();
@@ -219,7 +220,7 @@ function bindEvents(){
    finally{button.disabled=false;button.textContent='Sign in';}
  };
  $('signUpForm').onsubmit=async e=>{e.preventDefault();if(!configured)return toast('Use Demo Preview or configure Supabase first.');const {error}=await sb.auth.signUp({email:$('signupEmail').value,password:$('signupPassword').value,options:{data:{display_name:$('signupName').value.trim()}}});toast(error?error.message:'Account created. Check your email if confirmation is enabled.');};
- $('logoutButton').onclick=async()=>{if(state.demo){location.reload();return;}await sb.auth.signOut();state.user=null;showAuth();};
+ $('logoutButton').onclick=async()=>{try{sessionStorage.removeItem('cfb100CurrentPage');}catch(e){};if(state.demo){location.reload();return;}await sb.auth.signOut();state.user=null;state.currentPage='home';showAuth();};
  $('seasonSelect').onchange=async()=>{state.currentSeason=state.seasons.find(s=>s.id===$('seasonSelect').value);await loadWeeks();};$('weekSelect').onchange=async()=>{state.currentWeek=state.weeks.find(w=>w.id===$('weekSelect').value);$('commissionerWeekSelect').value=state.currentWeek.id;await loadWeek();};
  $('gamesGrid').onclick=e=>{const r=e.target.closest('input[data-game]');if(r)savePick(r.dataset.game,r.dataset.side);};
  $('addGlobalSpreadRule').onclick=()=>$('globalSpreadRules').insertAdjacentHTML('beforeend',spreadRuleRow());$('addWeekSpreadRule').onclick=()=>$('weekSpreadRules').insertAdjacentHTML('beforeend',spreadRuleRow());document.addEventListener('click',e=>{if(e.target.classList.contains('remove-rule'))e.target.closest('.spread-rule').remove();if(e.target.classList.contains('edit-game')){const g=state.games.find(x=>x.id===e.target.dataset.id);if(!g)return;$('gameEditId').value=g.id;$('awayTeam').value=g.away_team;$('homeTeam').value=g.home_team;$('kickoff').value=new Date(g.kickoff).toISOString().slice(0,16);$('network').value=g.network||'';$('awaySpread').value=g.away_spread??'';$('homeSpread').value=g.home_spread??'';$('gameDialog').showModal();}if(e.target.classList.contains('grade-game'))gradeGame(e.target.dataset.id);});

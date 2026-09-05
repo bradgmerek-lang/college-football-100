@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#08111f" />
+  <title>College Football 100</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast" class="toast" hidden></div>
+  <section id="authView" class="auth-shell">
+    <div class="brand-block">
+      <div class="eyebrow">SURVIVE • STACK WINS • FIRST TO 100</div>
+      <h1>College Football <span>100</span></h1>
+      <p>Pick any FBS games you want. Every correct pick moves your active run forward. One loss ends the run.</p>
+      <div class="feature-pills"><span>🔒 Hidden picks</span><span>⏱ Auto-lock</span><span>🏁 Road to 100</span></div>
+    </div>
+    <div class="auth-card">
+      <div class="tabs"><button class="tab active" data-auth-tab="signin">Sign in</button><button class="tab" data-auth-tab="signup">Create account</button></div>
+      <form id="signInForm" class="auth-form">
+        <label>Email<input id="signinEmail" name="email" type="email" inputmode="email" autocomplete="username email" autocapitalize="none" spellcheck="false" required></label>
+        <label>Password<input id="signinPassword" name="password" type="password" autocomplete="current-password" required></label>
+        <button class="primary" type="submit">Sign in</button>
+      </form>
+      <form id="signUpForm" class="auth-form" hidden>
+        <label>Display name<input id="signupName" name="display-name" maxlength="40" autocomplete="nickname" required></label>
+        <label>Email<input id="signupEmail" name="signup-email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>
+        <label>Password<input id="signupPassword" name="new-password" type="password" minlength="8" autocomplete="new-password" required></label>
+        <button class="primary" type="submit">Create account</button>
+      </form>
+      <button id="demoButton" class="secondary full">Preview demo without setup</button>
+      <p class="micro">Demo mode is local-only. Production accounts and private picks activate after the free Supabase setup.</p>
+    </div>
+  </section>
+
+  <div id="appView" hidden>
+    <header class="topbar">
+      <div><div class="logo-mark">100</div><strong>College Football 100</strong></div>
+      <nav>
+        <button data-page="home" class="nav-btn active">Home</button>
+        <button data-page="picks" class="nav-btn">Picks</button>
+        <button data-page="standings" class="nav-btn">Standings</button>
+        <button data-page="history" class="nav-btn">My Runs</button>
+        <button data-page="rules" class="nav-btn">Rules</button>
+        <button id="commissionerNav" data-page="commissioner" class="nav-btn" hidden>Commissioner</button>
+      </nav>
+      <div class="user-menu"><span id="userName"></span><button id="logoutButton" class="text-btn">Log out</button></div>
+    </header>
+
+    <main class="container">
+      <section id="homePage" class="page">
+        <div class="home-hero">
+          <div class="home-hero-copy">
+            <div class="eyebrow">COLLEGE FOOTBALL 100</div>
+            <h2 id="homeGreeting">Welcome back</h2>
+            <p>Every correct pick moves you closer. One loss ends the run.</p>
+            <button id="homeMakePicks" class="primary home-cta">Make This Week's Picks</button>
+          </div>
+          <div class="home-score-card">
+            <span>ROAD TO 100</span>
+            <strong id="homeWins">0</strong>
+            <small>wins on current run</small>
+            <div class="progress-track"><div id="homeRunBar" class="progress-fill" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div id="homeMessage" class="commissioner-message card" hidden></div>
+        <div class="home-grid">
+          <div class="card home-panel"><div class="panel-kicker">THIS WEEK</div><h3 id="homeWeekTitle">Week</h3><div id="homeWeekSummary" class="home-stat-grid"></div><button id="homeViewPicks" class="secondary full">View My Picks</button></div>
+          <div class="card home-panel"><div class="panel-kicker">NEXT UP</div><h3>Upcoming selections</h3><div id="homeUpcoming" class="home-upcoming"></div></div>
+          <div class="card home-panel"><div class="panel-kicker">STANDINGS</div><h3>Road to 100 leaders</h3><div id="homeLeaders" class="home-leaders"></div><button id="homeViewStandings" class="secondary full">View Full Standings</button></div>
+          <div id="homeCommissionerPanel" class="card home-panel" hidden><div class="panel-kicker">COMMISSIONER</div><h3>Pool status</h3><div id="homeCommissionerStats" class="home-stat-grid"></div><button id="homeCommissionerButton" class="secondary full">Open Commissioner Dashboard</button></div>
+        </div>
+      </section>
+
+      <section id="picksPage" class="page" hidden>
+        <div class="football-banner" aria-hidden="true">
+          <div class="football-banner-copy">
+            <span>COLLEGE FOOTBALL 100</span>
+            <strong>Perfect picks. A longer journey.</strong>
+          </div>
+        </div>
+        <div class="hero-row">
+          <div>
+            <div class="eyebrow">ACTIVE RUN</div>
+            <h2 id="welcomeTitle">Road to 100</h2>
+            <p id="weekSubtitle" class="muted">Choose a week to begin.</p>
+          </div>
+          <div class="progress-card">
+            <div class="progress-meta"><strong id="runWins">0</strong><span>/ 100 wins</span></div>
+            <div class="progress-track"><div id="runBar" class="progress-fill" style="width:0%"></div></div>
+            <small id="runStatus">ACTIVE</small>
+          </div>
+        </div>
+
+        <div class="toolbar card">
+          <label>Season<select id="seasonSelect"></select></label>
+          <label>Week<select id="weekSelect"></select></label>
+          <label>Filter<select id="gameFilter"><option value="all">All games</option><option value="open">Open only</option><option value="picked">My picks</option></select></label>
+        </div>
+
+        <div id="requirementsCard" class="requirements card"></div>
+        <div id="gamesGrid" class="games-grid"></div>
+        <div id="emptyGames" class="empty card" hidden>No games are loaded for this week yet.</div>
+      </section>
+
+      <section id="standingsPage" class="page" hidden>
+        <div class="section-head"><div><div class="eyebrow">LEADERBOARD</div><h2>Road to 100 Standings</h2></div><span class="privacy-chip">Picks reveal at kickoff</span></div>
+        <div class="card table-wrap"><table><thead><tr><th>Rank</th><th>Player</th><th>Current run</th><th>Best run</th><th>Entries</th><th>Status</th><th>Progress</th></tr></thead><tbody id="standingsBody"></tbody></table></div>
+      </section>
+
+      <section id="historyPage" class="page" hidden>
+        <div class="section-head"><div><div class="eyebrow">ENTRY HISTORY</div><h2>My Runs</h2></div></div>
+        <div id="historyList" class="stack"></div>
+      </section>
+
+      <section id="rulesPage" class="page" hidden>
+        <div class="section-head rules-head">
+          <div><div class="eyebrow">HOW THE POOL WORKS</div><h2>College Football 100 Rules</h2><p class="muted">First to 100 correct picks on one active run wins. One wrong pick ends the run.</p></div>
+          <span class="privacy-chip">Official pool rules</span>
+        </div>
+
+        <div id="rulesCurrentWeek" class="card rules-current"></div>
+
+        <div class="rules-grid">
+          <article class="card rule-card"><div class="rule-number">1</div><div><h3>Road to 100</h3><p>Your goal is to reach <strong>100 correct picks on a single active run</strong>. Correct picks add one win to that run. A new entry starts at zero.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">2</div><div><h3>Choose your games</h3><p>You may pick any loaded FBS games, subject to the commissioner’s minimum, maximum, and spread requirements for that week. You do not have to pick every game.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">3</div><div><h3>Picks stay completely private</h3><p>Before a game kicks off, other players cannot see your selection — or even tell that you made a selection in that game. No hidden-pick marker or future-pick total is exposed.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">4</div><div><h3>Each game locks at kickoff</h3><p>You may add, change, or remove your pick until that game’s scheduled kickoff. At kickoff, the selection locks automatically and can no longer be changed by the player.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">5</div><div><h3>Picks reveal after kickoff</h3><p>Once an individual game kicks off, that selection may appear in the player’s revealed picks. Games that have not started remain completely invisible to everyone else.</p></div></article>
+          <article class="card rule-card danger-rule"><div class="rule-number">6</div><div><h3>One loss ends the run</h3><p>An incorrect pick ends the active run immediately for scoring purposes. Picks from games that kicked off earlier still count. Picks with a <strong>later kickoff time in that same week are void</strong> and do not count as wins or losses.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">7</div><div><h3>Same-time kickoffs are graded together</h3><p>If multiple selected games have the exact same kickoff time, they are treated as the same scoring group. A loss in that group does not erase the results of the other games in that same group.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">8</div><div><h3>Re-entry starts the next week</h3><p>If re-entry is allowed, a player who loses cannot start another run on the remaining games that week. The earliest possible new entry is the following week, subject to the season’s re-entry policy.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">9</div><div><h3>Opening spreads & weekly spread requirements</h3><p>The site uses the opening spread captured for each game. A rule such as <strong>“at least 1 pick with a maximum favorite spread of 9.5”</strong> means at least one selected team must have a line of <strong>-9.5 or better</strong>. For example, -9.5, -7, +3, or +14 qualify; -10 or -14 do not.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">10</div><div><h3>Commissioner administration</h3><p>The commissioner may correct imported or historical picks, player records, and grading when necessary. Administrative overrides are separate from normal player access and are recorded by the site’s audit tools.</p></div></article>
+        </div>
+
+        <div class="card rules-note"><strong>Weekly settings can change.</strong><span>The “Current Week” panel above reflects the active week’s requirements. When a week has a commissioner override, those settings take precedence over the season defaults.</span></div>
+      </section>
+
+      <section id="commissionerPage" class="page" hidden>
+        <div class="section-head"><div><div class="eyebrow">COMMISSIONER CONTROL</div><h2>Commissioner Dashboard</h2></div><span class="commissioner-chip">Commissioner</span></div>
+        <div class="commissioner-grid">
+          <div class="card panel">
+            <h3>Season defaults</h3>
+            <label>Minimum picks per week<input id="globalMinPicks" type="number" min="0" value="1"></label>
+            <label>Maximum picks per week <small>(0 = unlimited)</small><input id="globalMaxPicks" type="number" min="0" value="0"></label>
+            <label>Re-entry policy<select id="globalReentry"><option value="unlimited">Unlimited</option><option value="limited">Limited</option><option value="disabled">No re-entry</option></select></label>
+            <label>Maximum entries <small>(used only when limited)</small><input id="globalMaxEntries" type="number" min="1" value="3"></label>
+            <div class="switch-row"><span>Registration open</span><input id="registrationOpen" type="checkbox" checked></div>
+            <h4>Spread requirements</h4>
+            <div id="globalSpreadRules"></div>
+            <button id="addGlobalSpreadRule" class="secondary full">+ Add spread requirement</button>
+            <button id="saveSeasonSettings" class="primary full">Save season defaults</button>
+          </div>
+
+          <div class="card panel">
+            <h3>Week override</h3>
+            <label>Week<select id="commissionerWeekSelect"></select></label>
+            <div class="switch-row"><span>Customize this week</span><input id="weekOverrideEnabled" type="checkbox"></div>
+            <div id="weekOverrideFields" class="stack-sm" hidden>
+              <label>Minimum picks<input id="weekMinPicks" type="number" min="0"></label>
+              <label>Maximum picks <small>(0 = unlimited)</small><input id="weekMaxPicks" type="number" min="0"></label>
+              <h4>Spread requirements</h4><div id="weekSpreadRules"></div>
+              <button id="addWeekSpreadRule" class="secondary full">+ Add spread requirement</button>
+            </div>
+            <button id="copyDefaults" class="secondary full">Copy season defaults</button>
+            <button id="saveWeekSettings" class="primary full">Save week settings</button>
+          </div>
+
+          <div class="card panel">
+            <h3>Games & results</h3>
+            <div class="button-row"><button id="importWeekButton" class="primary">Import selected week</button><button id="addGameButton" class="secondary">Add game manually</button></div>
+            <p class="micro">The importer uses the server-side CFBD key. Manual entry remains available at all times.</p>
+            <div id="adminGamesList" class="admin-games"></div>
+          </div>
+
+          <div class="card panel">
+            <h3>Pool controls</h3>
+            <label>Commissioner message<textarea id="commissionerMessage" rows="3" placeholder="Week 5 games are live..."></textarea></label>
+            <button id="saveMessage" class="secondary full">Post message</button>
+            <p class="micro">Messages appear on every player's Home dashboard.</p>
+          </div>
+
+          <div class="card panel player-admin-panel">
+            <div class="panel-title-row"><div><h3>Player administration</h3><p class="micro">Manage accounts, entries, and historical picks without leaving the site.</p></div><button id="refreshPlayers" class="secondary compact">Refresh</button></div>
+            <label>Find player<input id="playerSearch" type="search" placeholder="Search display name..."></label>
+            <div id="adminPlayersList" class="admin-players"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="playerPicksDialog" class="modal player-picks-modal">
+    <div class="modal-head"><div><div class="eyebrow">REVEALED PICKS</div><h3 id="playerPicksTitle">Player Picks</h3></div><button id="closePlayerPicks" class="icon-btn" type="button">✕</button></div>
+    <p class="micro">Only selections from games that have already kicked off are shown. Future picks and future-pick counts remain completely private.</p>
+    <div id="playerPicksList" class="revealed-picks"></div>
+  </dialog>
+
+  <dialog id="adminPlayerDialog" class="modal admin-player-modal">
+    <div class="modal-head"><div><div class="eyebrow">PLAYER ADMINISTRATION</div><h3 id="adminPlayerTitle">Player</h3></div><button id="closeAdminPlayer" class="icon-btn" type="button">✕</button></div>
+    <input id="adminPlayerId" type="hidden">
+    <div class="admin-player-grid">
+      <label>Display name<input id="adminDisplayName" maxlength="40"></label>
+      <label>Account status<select id="adminDisabled"><option value="false">Enabled</option><option value="true">Disabled</option></select></label>
+    </div>
+    <button id="saveAdminPlayer" class="primary full">Save player</button>
+    <div class="admin-divider"></div>
+    <div class="panel-title-row"><div><h4>Entries / runs</h4><p class="micro">Manual changes are recorded in the commissioner audit log.</p></div><button id="grantReentry" class="secondary compact">Grant re-entry</button></div>
+    <div id="adminEntriesList" class="admin-entries"></div>
+    <div class="admin-divider"></div>
+    <button id="openPickAdmin" class="secondary full">Edit this player's picks</button>
+  </dialog>
+
+  <dialog id="adminPicksDialog" class="modal admin-picks-modal">
+    <div class="modal-head"><div><div class="eyebrow">PICK ADMINISTRATION</div><h3 id="adminPicksTitle">Player Picks</h3></div><button id="closeAdminPicks" class="icon-btn" type="button">✕</button></div>
+    <p class="micro">For pool integrity, the commissioner editor shows only games whose kickoff time has passed. This is enough to enter or correct your existing Week 1 spreadsheet picks without exposing future selections.</p>
+    <label>Week<select id="adminPickWeek"></select></label>
+    <div id="adminPickGames" class="admin-pick-games"></div>
+  </dialog>
+
+  <dialog id="gameDialog" class="modal"><form method="dialog" id="gameForm">
+    <div class="modal-head"><h3>Add / edit game</h3><button value="cancel" class="icon-btn">✕</button></div>
+    <input id="gameEditId" type="hidden">
+    <div class="form-grid">
+      <label>Away team<input id="awayTeam" required></label><label>Home team<input id="homeTeam" required></label>
+      <label>Kickoff<input id="kickoff" type="datetime-local" required></label><label>TV / Network<input id="network"></label>
+      <label>Away spread<input id="awaySpread" type="number" step="0.5"></label><label>Home spread<input id="homeSpread" type="number" step="0.5"></label>
+    </div>
+    <button class="primary full" value="default">Save game</button>
+  </form></dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

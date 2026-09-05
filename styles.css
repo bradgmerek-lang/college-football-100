@@ -291,3 +291,92 @@ input,select,textarea{font-size:16px}
     padding-bottom: calc(28px + env(safe-area-inset-bottom));
   }
 }
+
+/* v6 — orientation-independent mobile navigation.
+   Keep the full site navigation in normal document flow directly below the
+   first header row on ALL phone/tablet widths, not just portrait widths. */
+@media (max-width: 800px) {
+  .topbar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-rows: auto auto !important;
+    align-items: center !important;
+    gap: 6px 8px !important;
+    min-height: 0 !important;
+    padding: 8px 10px 7px !important;
+  }
+
+  .topbar > div:first-child {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    min-width: 0 !important;
+  }
+
+  .topbar .user-menu {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    justify-self: end !important;
+  }
+
+  .topbar nav {
+    position: static !important;
+    inset: auto !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    overflow: visible !important;
+    background: transparent !important;
+    border-top: 1px solid var(--line) !important;
+    padding: 6px 0 0 !important;
+    z-index: auto !important;
+  }
+
+  .topbar nav .nav-btn {
+    display: block !important;
+    position: static !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    min-height: 38px !important;
+    padding: 8px 4px !important;
+    font-size: .68rem !important;
+    line-height: 1.15 !important;
+    white-space: normal !important;
+    text-align: center !important;
+  }
+
+  .topbar nav .nav-btn[hidden] {
+    display: none !important;
+  }
+
+  .mobile-home-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+  }
+
+  .container {
+    padding-bottom: calc(32px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar nav {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    overflow: visible !important;
+    padding: 6px 0 0 !important;
+  }
+  .topbar nav .nav-btn {
+    flex: initial !important;
+    min-width: 0 !important;
+    font-size: .64rem !important;
+  }
+}

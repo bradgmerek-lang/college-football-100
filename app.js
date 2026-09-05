@@ -153,7 +153,96 @@ async function savePick(gameId,side){
 function effectiveSpreadForPick(p){const g=state.games.find(x=>x.id===p.game_id);return g?Number(g[`${p.selected_side}_spread`]):null;}
 function renderRequirements(){const rw=reentryWeek();if(!state.activeEntry&&rw){$('requirementsCard').innerHTML=`<div class="run-ended-note prominent"><strong>Run ended</strong><span>An incorrect pick ended this entry. Later picks from that week do not count. You may re-enter starting Week ${rw}.</span></div>`;return;}const min=Number(state.rules?.min_picks||0),max=Number(state.rules?.max_picks||0),n=state.picks.length,rules=state.rules?.spread_requirements||[];let html=`<h3>Week ${state.currentWeek?.week_number||''} requirements</h3><div class="req-list"><span class="req ${n>=min?'met':'unmet'}">${n}/${min} minimum picks</span>${max?`<span class="req ${n<=max?'met':'unmet'}">${n}/${max} maximum picks</span>`:''}`;for(const r of rules){const count=state.picks.filter(p=>{const s=effectiveSpreadForPick(p);return s!==null&&s>=Number(r.max_spread);}).length;html+=`<span class="req ${count>=r.required_count?'met':'unmet'}">${count}/${r.required_count} pick${r.required_count==1?'':'s'} with selected line ${fmtSpread(r.max_spread)} or higher</span>`;}html+='</div><p class="micro">You may pick more than the minimum unless a maximum is set. Spread requirements apply to the team you select.</p>';$('requirementsCard').innerHTML=html;}
 async function renderStandings(){if(state.demo){state.standings=[{user_id:'demo',display_name:'Brad',current_wins:12,best_wins:12,entry_count:1,status:'active'},{user_id:'d2',display_name:'Jordan',current_wins:44,best_wins:44,entry_count:3,status:'active'},{user_id:'d3',display_name:'Taylor',current_wins:18,best_wins:21,entry_count:2,status:'active'}];}else{const {data,error}=await sb.rpc('get_standings',{p_season_id:state.currentSeason.id});if(error)return toast(error.message);state.standings=data||[];}$('standingsBody').innerHTML=state.standings.map((s,i)=>`<tr class="standing-row" data-user="${s.user_id}" data-name="${escapeHtml(s.display_name)}"><td><strong>${i+1}</strong></td><td><button class="player-picks-link" data-user="${s.user_id}" data-name="${escapeHtml(s.display_name)}">${escapeHtml(s.display_name)}</button></td><td><strong>${s.current_wins}</strong></td><td>${s.best_wins}</td><td>${s.entry_count}</td><td class="status-${s.status}">${s.status.toUpperCase()}</td><td><div class="mini-progress"><div><span style="width:${Math.min(100,s.current_wins)}%"></span></div><small>${s.current_wins}/100</small></div></td></tr>`).join('');}
-async function showPlayerPicks(userId,name){$('playerPicksTitle').textContent=`${name} · Revealed Picks`;$('playerPicksList').innerHTML='<div class="home-empty">Loading…</div>';$('playerPicksDialog').showModal();if(state.demo){$('playerPicksList').innerHTML='<div class="home-empty">No kicked-off picks in the demo yet.</div>';return;}const {data,error}=await sb.rpc('get_revealed_picks',{p_season_id:state.currentSeason.id,p_user_id:userId});if(error){$('playerPicksList').innerHTML='<div class="home-empty">Reveal function is not installed yet. Run the included SQL patch in Supabase.</div>';return;}const rows=data||[];$('playerPicksList').innerHTML=rows.length?rows.map(r=>`<div class="revealed-pick"><div><strong>${escapeHtml(r.selected_team)}</strong><span>${escapeHtml(r.away_team)} @ ${escapeHtml(r.home_team)}</span></div><div><small>${new Date(r.kickoff).toLocaleString([], {weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</small><b class="result-${r.result}">${String(r.result||'pending').toUpperCase()}</b></div></div>`).join(''):'<div class="home-empty">No picks are public yet. Future selections are not shown or counted here.</div>';}
+function revealedPickLiveStatus(r){
+  const hs=r.live_home_score,as=r.live_away_score;
+  const hasScore=hs!==null&&hs!==undefined&&as!==null&&as!==undefined;
+  if(!hasScore)return '';
+  let detail='';
+  if(r.live_status==='final')detail='FINAL';
+  else if(r.live_status==='in_progress'){
+    const period=Number(r.live_period||0);
+    const suffix=period===1?'1st':period===2?'2nd':period===3?'3rd':period===4?'4th':period?`OT${period-4}`:'LIVE';
+    detail=[suffix,r.live_clock].filter(Boolean).join(' · ');
+  }else return '';
+  return `<div class="revealed-live"><strong>${escapeHtml(r.away_team)} ${as} — ${escapeHtml(r.home_team)} ${hs}</strong><span>${escapeHtml(detail)}</span></div>`;
+}
+
+async function refreshEspnScores(){
+  if(state.demo||!sb)return;
+  try{
+    const {error}=await sb.functions.invoke('espn-scores');
+    if(error)console.warn('ESPN score refresh failed:',error);
+  }catch(err){console.warn('ESPN score refresh failed:',err);}
+}
+
+async function showPlayerPicks(userId,name){
+  $('playerPicksTitle').textContent=`${name} · Revealed Picks`;
+  $('playerPicksList').innerHTML='<div class="home-empty">Loading…</div>';
+  $('playerPicksDialog').showModal();
+
+  if(state.demo){
+    $('playerPicksList').innerHTML='<div class="home-empty">No kicked-off picks in the demo yet.</div>';
+    return;
+  }
+
+  await refreshEspnScores();
+
+  const {data,error}=await sb.rpc('get_revealed_picks',{
+    p_season_id:state.currentSeason.id,
+    p_user_id:userId
+  });
+
+  if(error){
+    $('playerPicksList').innerHTML='<div class="home-empty">Reveal function is not installed yet. Run the included SQL patch in Supabase.</div>';
+    return;
+  }
+
+  const rows=data||[];
+  if(!rows.length){
+    $('playerPicksList').innerHTML='<div class="home-empty">No picks are public yet. Future selections are not shown or counted here.</div>';
+    return;
+  }
+
+  const weekIds=(state.weeks||[]).map(w=>w.id).filter(Boolean);
+  let seasonGames=[];
+
+  if(weekIds.length){
+    const {data:liveRows,error:liveError}=await sb
+      .from('games')
+      .select('id,week_id,away_team,home_team,kickoff,live_home_score,live_away_score,live_status,live_period,live_clock,live_updated_at')
+      .in('week_id',weekIds);
+
+    if(!liveError)seasonGames=liveRows||[];
+  }
+
+  const norm=v=>String(v||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const merged=rows.map(r=>{
+    const direct=r.game_id?seasonGames.find(g=>g.id===r.game_id):null;
+    const matched=direct||seasonGames.find(g=>{
+      const sameTeams=
+        norm(g.away_team)===norm(r.away_team) &&
+        norm(g.home_team)===norm(r.home_team);
+      if(!sameTeams)return false;
+      if(!g.kickoff||!r.kickoff)return true;
+      return Math.abs(new Date(g.kickoff).getTime()-new Date(r.kickoff).getTime())<=4*60*60*1000;
+    });
+    return {...r,...(matched||{})};
+  });
+
+  $('playerPicksList').innerHTML=merged.map(r=>`
+    <div class="revealed-pick">
+      <div>
+        <strong>${escapeHtml(r.selected_team)}</strong>
+        <span>${escapeHtml(r.away_team)} @ ${escapeHtml(r.home_team)}</span>
+        ${revealedPickLiveStatus(r)}
+      </div>
+      <div>
+        <small>${new Date(r.kickoff).toLocaleString([], {weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</small>
+        <b class="result-${r.result}">${String(r.result||'pending').toUpperCase()}</b>
+      </div>
+    </div>
+  `).join('');
+}
 function renderHistory(){const entries=state.demo?[{entry_number:2,current_wins:12,best_wins:12,status:'active',created_at:new Date().toISOString()},{entry_number:1,current_wins:0,best_wins:31,status:'lost',loss_week_number:4,reentry_eligible_week_number:5,created_at:new Date(Date.now()-20*864e5).toISOString()}]:state.entries;$('historyList').innerHTML=entries.map(e=>`<div class="run-card card"><div class="run-number">#${e.entry_number}</div><div><strong>${e.status==='active'?'Current run':'Completed run'}</strong><div class="muted">Started ${new Date(e.created_at).toLocaleDateString()}${e.loss_week_number?` · Lost Week ${e.loss_week_number}`:''}</div></div><div><strong>${e.status==='active'?e.current_wins:e.best_wins} wins</strong><div class="status-${e.status}">${e.status.toUpperCase()}</div>${e.reentry_eligible_week_number?`<small class="muted">Re-entry Week ${e.reentry_eligible_week_number}+</small>`:''}</div></div>`).join('')||'<div class="empty card">No entries yet.</div>';}
 function spreadRuleRow(r={max_spread:-9.5,required_count:1}){return `<div class="spread-rule"><label>Max favorite spread<input class="rule-spread" type="number" step="0.5" value="${r.max_spread}"></label><label>Required picks<input class="rule-count" type="number" min="1" value="${r.required_count}"></label><button class="secondary remove-rule" type="button">✕</button></div>`;}
 async function renderCommissioner(){if(state.profile?.role!=='commissioner')return; if(state.demo){$('globalSpreadRules').innerHTML=spreadRuleRow();renderAdminGames();renderDemoPlayers();return;}const {data:ss}=await sb.from('season_settings').select('*').eq('season_id',state.currentSeason.id).maybeSingle();if(ss){$('globalMinPicks').value=ss.min_picks;$('globalMaxPicks').value=ss.max_picks;$('globalReentry').value=ss.reentry_policy;$('globalMaxEntries').value=ss.max_entries;$('registrationOpen').checked=ss.registration_open;$('commissionerMessage').value=ss.commissioner_message||'';$('globalSpreadRules').innerHTML=(ss.spread_requirements||[]).map(spreadRuleRow).join('')||spreadRuleRow();}await loadWeekOverride();renderAdminGames();await loadAdminPlayers();}

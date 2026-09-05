@@ -420,3 +420,83 @@ input,select,textarea{font-size:16px}
   border-color:#3b5673!important;
 }
 .portrait-nav .portrait-nav-btn[hidden]{display:none!important}
+
+
+/* v8 — artwork readability + unobstructed hero artwork */
+/* Keep the current-run progress panel out of the stadium artwork on every screen. */
+.home-hero{
+  margin-bottom:12px;
+}
+.home-score-card{
+  width:100%;
+  min-width:0;
+  margin:0 0 20px;
+  padding:14px 18px;
+  display:grid;
+  grid-template-columns:auto auto auto minmax(180px,1fr);
+  align-items:center;
+  gap:10px 14px;
+  background:linear-gradient(180deg,rgba(18,34,56,.98),rgba(10,23,39,.98));
+  backdrop-filter:none;
+  position:static;
+}
+.home-score-card>span{
+  white-space:nowrap;
+}
+.home-score-card>strong{
+  display:block;
+  font-size:2rem;
+  line-height:1;
+  margin:0;
+}
+.home-score-card>small{
+  color:#bdcad8;
+  white-space:nowrap;
+}
+.home-score-card>.progress-track{
+  width:100%;
+  margin:0;
+}
+
+/* Make the Picks-page stadium slogan legible without hiding the artwork. */
+@media (min-width:801px){
+  .football-banner-copy{
+    left:30px;
+    bottom:24px;
+    gap:7px;
+    padding:12px 16px 13px;
+    border-radius:12px;
+    background:linear-gradient(90deg,rgba(4,12,22,.80),rgba(4,12,22,.38));
+    border-left:3px solid var(--accent);
+    text-shadow:0 2px 14px rgba(0,0,0,.95);
+  }
+  .football-banner-copy span{
+    color:#ffd36f;
+  }
+  .football-banner-copy strong{
+    color:#fff;
+    font-size:clamp(1.55rem,2.8vw,2.25rem);
+    font-weight:900;
+    letter-spacing:-.025em;
+  }
+}
+
+@media (max-width:800px){
+  .home-score-card{
+    margin-bottom:16px;
+    padding:13px 14px;
+    grid-template-columns:auto 1fr;
+    gap:7px 12px;
+  }
+  .home-score-card>strong{
+    justify-self:end;
+    font-size:1.8rem;
+  }
+  .home-score-card>small{
+    grid-column:1 / -1;
+    white-space:normal;
+  }
+  .home-score-card>.progress-track{
+    grid-column:1 / -1;
+  }
+}

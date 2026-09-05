@@ -126,3 +126,120 @@ input,select,textarea{font-size:16px}
   .topbar>div:first-child{min-width:0}
   .mobile-home-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;margin-left:2px;min-height:38px}
 }
+
+/* 2026-09-05 portrait-phone orientation fix.
+   Landscape keeps the existing mobile layout; narrow portrait gets a dedicated layout. */
+@media (max-width: 600px) and (orientation: portrait) {
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+  .topbar {
+    grid-template-columns: minmax(0,1fr) auto;
+    gap: 8px;
+    min-height: 60px;
+    padding: 8px 10px;
+  }
+  .topbar > div:first-child { gap: 7px; min-width: 0; }
+  .logo-mark { width: 34px; height: 34px; border-radius: 9px; font-size: .82rem; flex: 0 0 auto; }
+  .mobile-home-btn { min-height: 34px; padding: 7px 9px; font-size: .75rem; white-space: nowrap; }
+  .user-menu { gap: 4px; min-width: 0; }
+  .user-menu .text-btn { padding: 8px 6px; font-size: .72rem; white-space: nowrap; }
+
+  /* Two-row bottom navigation so every destination remains reachable in portrait. */
+  .topbar nav {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 0;
+    overflow: visible;
+    padding: 4px max(4px, env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left));
+  }
+  .topbar nav .nav-btn {
+    min-width: 0;
+    width: 100%;
+    padding: 9px 3px;
+    font-size: .66rem;
+    line-height: 1.15;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 18px 10px calc(132px + env(safe-area-inset-bottom));
+  }
+
+  .auth-shell { min-height: 100dvh; padding: 20px 14px 28px; gap: 22px; align-content: center; }
+  .brand-block h1 { font-size: clamp(2.65rem, 14vw, 3.7rem); }
+  .brand-block > p { font-size: .98rem; line-height: 1.55; }
+  .feature-pills { margin-top: 18px; gap: 7px; }
+  .feature-pills span { font-size: .72rem; padding: 7px 9px; }
+  .auth-card { padding: 20px 16px; }
+
+  .home-hero { min-height: 310px; padding: 18px 14px; border-radius: 16px; }
+  .home-hero-copy { width: 100%; padding-top: 92px; }
+  .home-hero h2 { font-size: clamp(1.85rem, 10vw, 2.35rem); }
+  .home-score-card { padding: 14px; }
+  .home-stat-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+
+  .football-banner { min-height: 118px; aspect-ratio: auto; }
+  .football-banner-copy { left: 14px; right: 14px; bottom: 12px; }
+  .football-banner-copy strong { font-size: clamp(1rem,5vw,1.35rem); }
+
+  .hero-row, .section-head { gap: 12px; margin-bottom: 16px; }
+  .hero-row h2, .section-head h2 { font-size: clamp(1.75rem, 9vw, 2.35rem); }
+  .progress-card { width: 100%; }
+
+  .toolbar { grid-template-columns: 1fr; gap: 10px; padding: 12px; }
+  .toolbar label:last-child { grid-column: auto; }
+  .req-list { display: grid; grid-template-columns: 1fr; }
+
+  .game-head, .game-foot { gap: 8px; flex-wrap: wrap; }
+  .team-option { grid-template-columns: auto minmax(0,1fr) auto; gap: 9px; padding: 13px 2px; }
+  .team-name { min-width: 0; overflow-wrap: anywhere; }
+  .spread { white-space: nowrap; }
+
+  .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 700px; }
+  th, td { padding: 12px 10px; }
+
+  .run-card { grid-template-columns: 1fr; gap: 9px; }
+  .run-card > div:last-child { grid-column: auto; }
+
+  .panel { padding: 15px; }
+  .panel-title-row { flex-direction: column; align-items: stretch; }
+  .panel-title-row .compact { align-self: flex-start; }
+  .spread-rule { grid-template-columns: 1fr; }
+  .spread-rule button { width: 100%; }
+  .admin-game { align-items: flex-start; flex-direction: column; }
+  .admin-player-row { grid-template-columns: 1fr; }
+  .admin-player-row > :last-child { justify-self: start; }
+  .admin-entry-row { grid-template-columns: 1fr; }
+  .admin-entry-actions { grid-column: auto; }
+  .admin-pick-control { grid-template-columns: 1fr; }
+  .adjust-entry-form { grid-template-columns: 1fr; }
+  .adjust-entry-form button { grid-column: auto; }
+
+  .modal {
+    width: calc(100% - 16px);
+    max-height: calc(100dvh - 16px);
+    overflow-y: auto;
+    padding: 16px;
+    margin: auto;
+  }
+  .modal-head { align-items: flex-start; gap: 10px; }
+
+  .rules-week-grid { grid-template-columns: 1fr; }
+  .rules-note { padding: 14px; }
+  .rule-card { grid-template-columns: 30px minmax(0,1fr); gap: 10px; }
+}
+
+/* Very narrow phones: preserve breathing room without hiding controls. */
+@media (max-width: 360px) and (orientation: portrait) {
+  .mobile-home-btn { padding-left: 7px; padding-right: 7px; font-size: .7rem; }
+  .topbar nav .nav-btn { font-size: .61rem; padding: 8px 2px; }
+  .container { padding-left: 8px; padding-right: 8px; }
+  .auth-shell { padding-left: 10px; padding-right: 10px; }
+}

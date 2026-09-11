@@ -793,3 +793,12 @@ input,select,textarea{font-size:16px}
   #picksPage .team-copy .team-name{font-size:.88rem}
   #picksPage .game-head{padding:9px 10px}
 }
+
+
+/* Immediate player re-entry */
+#picksPage .reentry-card{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px;padding:18px 20px;border-color:rgba(242,177,52,.45);background:linear-gradient(135deg,rgba(242,177,52,.12),rgba(10,23,39,.98) 48%)}
+#picksPage .reentry-card[hidden]{display:none!important}
+#picksPage .reentry-card h3{margin:2px 0 5px}
+#picksPage .reentry-card p{margin:0;color:var(--text-muted)}
+#picksPage .reentry-card button{white-space:nowrap}
+@media(max-width:650px){#picksPage .reentry-card{align-items:stretch;flex-direction:column}#picksPage .reentry-card button{width:100%}}

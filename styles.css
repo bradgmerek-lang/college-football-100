@@ -847,3 +847,76 @@ input,select,textarea{font-size:16px}
   #allpicksPage .all-picks-score-col{position:static;left:auto}
   #allpicksPage thead .all-picks-score-col{position:sticky;top:0}
 }
+
+
+/* v19 — single, consistent navigation on mobile.
+   Previous versions rendered both the header navigation and a separate portrait
+   fallback row, which could duplicate controls. The header nav is now the one
+   navigation source on every page and in every orientation. */
+.mobile-home-btn,
+.portrait-nav { display:none !important; }
+
+@media (max-width: 800px) {
+  .topbar {
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    grid-template-rows:auto auto !important;
+    align-items:center !important;
+    gap:7px 8px !important;
+    padding:8px 10px 7px !important;
+  }
+  .topbar > div:first-child {
+    grid-column:1 !important;
+    grid-row:1 !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    min-width:0 !important;
+  }
+  .topbar > div:first-child strong {
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .topbar .user-menu {
+    grid-column:2 !important;
+    grid-row:1 !important;
+    justify-self:end !important;
+    min-width:0 !important;
+  }
+  .topbar nav {
+    position:static !important;
+    inset:auto !important;
+    grid-column:1 / -1 !important;
+    grid-row:2 !important;
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:5px !important;
+    overflow:visible !important;
+    padding:7px 0 0 !important;
+    border-top:1px solid var(--line) !important;
+    background:transparent !important;
+    z-index:auto !important;
+  }
+  .topbar nav .nav-btn {
+    display:block !important;
+    min-width:0 !important;
+    width:100% !important;
+    min-height:39px !important;
+    padding:8px 4px !important;
+    font-size:.68rem !important;
+    line-height:1.15 !important;
+    white-space:normal !important;
+    text-align:center !important;
+  }
+  .topbar nav .nav-btn[hidden] { display:none !important; }
+  .container { padding-bottom:calc(32px + env(safe-area-inset-bottom)) !important; }
+}
+
+@media (max-width: 380px) {
+  .topbar { padding-left:8px !important; padding-right:8px !important; }
+  .topbar nav { gap:4px !important; }
+  .topbar nav .nav-btn { font-size:.63rem !important; padding-left:2px !important; padding-right:2px !important; }
+  .user-menu #userName { display:none; }
+}

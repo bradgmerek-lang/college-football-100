@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=18" />
+  <link rel="stylesheet" href="styles.css?v=19" />
   <style>
     /* v9: forced visual polish; inline so browser CSS caching cannot hide the change */
     .home-score-strip{
@@ -132,7 +132,7 @@
 
   <div id="appView" hidden>
     <header class="topbar">
-      <div><div class="logo-mark">100</div><strong>College Football 100</strong><button data-page="home" class="mobile-home-btn" aria-label="Go to Home">⌂ Home</button></div>
+      <div><div class="logo-mark">100</div><strong>College Football 100</strong></div>
       <nav>
         <button data-page="home" class="nav-btn active">Home</button>
         <button data-page="picks" class="nav-btn">Picks</button>
@@ -145,15 +145,6 @@
       <div class="user-menu"><span id="userName"></span><button id="logoutButton" class="text-btn">Log out</button></div>
     </header>
 
-    <nav id="portraitNav" class="portrait-nav" aria-label="Mobile site navigation" hidden>
-      <button data-page="home" class="nav-btn portrait-nav-btn active">Home</button>
-      <button data-page="picks" class="nav-btn portrait-nav-btn">Picks</button>
-      <button data-page="allpicks" class="nav-btn portrait-nav-btn">All Picks</button>
-      <button data-page="standings" class="nav-btn portrait-nav-btn">Standings</button>
-      <button data-page="history" class="nav-btn portrait-nav-btn">My Runs</button>
-      <button data-page="rules" class="nav-btn portrait-nav-btn">Rules</button>
-      <button id="commissionerPortraitNav" data-page="commissioner" class="nav-btn portrait-nav-btn" hidden>Commissioner</button>
-    </nav>
 
     <main class="container">
       <section id="homePage" class="page">
@@ -360,6 +351,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=18"></script>
+  <script src="app.js?v=19"></script>
 </body>
 </html>

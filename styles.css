@@ -802,3 +802,48 @@ input,select,textarea{font-size:16px}
 #picksPage .reentry-card p{margin:0;color:var(--text-muted)}
 #picksPage .reentry-card button{white-space:nowrap}
 @media(max-width:650px){#picksPage .reentry-card{align-items:stretch;flex-direction:column}#picksPage .reentry-card button{width:100%}}
+
+
+/* All Picks matrix */
+#allpicksPage .all-picks-toolbar{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:10px}
+#allpicksPage .all-picks-toolbar label{min-width:180px}
+#allpicksPage .all-picks-live-note{display:flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.86rem;padding-bottom:4px}
+#allpicksPage .live-dot{width:8px;height:8px;border-radius:50%;background:#69d69d;box-shadow:0 0 0 4px rgba(105,214,157,.1)}
+#allpicksPage .all-picks-meta{color:var(--text-muted);font-size:.82rem;margin:0 2px 10px}
+#allpicksPage .all-picks-wrap{padding:0;overflow:hidden}
+#allpicksPage .all-picks-scroll{overflow:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+#allpicksPage .all-picks-table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;font-size:.84rem}
+#allpicksPage .all-picks-table th,#allpicksPage .all-picks-table td{padding:10px 11px;border-right:1px solid #22374e;border-bottom:1px solid #22374e;vertical-align:middle;background:#0c1a2b}
+#allpicksPage .all-picks-table thead th{position:sticky;top:0;z-index:5;background:#142943;color:#dce6f0;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+#allpicksPage .all-picks-game-col{position:sticky;left:0;z-index:3;min-width:240px;max-width:280px;background:#102139!important}
+#allpicksPage thead .all-picks-game-col{z-index:7;background:#17304d!important}
+#allpicksPage .all-picks-score-col{position:sticky;left:240px;z-index:2;min-width:175px;background:#0f2035!important}
+#allpicksPage thead .all-picks-score-col{z-index:6;background:#17304d!important}
+#allpicksPage .all-picks-player-head{min-width:128px;max-width:170px;text-align:center}
+#allpicksPage .all-picks-game{display:grid;gap:3px}
+#allpicksPage .all-picks-game strong{color:#f0f4f8;line-height:1.25}
+#allpicksPage .all-picks-game span{color:#8ea3ba;font-size:.73rem}
+#allpicksPage .all-picks-score{display:grid;gap:3px}
+#allpicksPage .all-picks-score strong{font-size:.68rem;color:#f2b134;letter-spacing:.06em}
+#allpicksPage .all-picks-score span{font-size:.74rem;color:#c5d1dd;white-space:nowrap}
+#allpicksPage .all-picks-cell{text-align:center;min-width:128px}
+#allpicksPage .all-picks-cell strong{display:block;max-width:150px;margin:auto;color:#edf3f8;white-space:normal;line-height:1.2}
+#allpicksPage .all-picks-cell span{display:inline-block;margin-top:5px;font-size:.61rem;font-weight:950;letter-spacing:.08em;color:#8196aa}
+#allpicksPage .all-picks-cell.result-correct{background:rgba(91,196,145,.09)}
+#allpicksPage .all-picks-cell.result-correct span{color:#6be0a8}
+#allpicksPage .all-picks-cell.result-incorrect{background:rgba(255,107,116,.09)}
+#allpicksPage .all-picks-cell.result-incorrect span{color:#ff8d96}
+#allpicksPage .all-picks-cell.result-pending span{color:#f2b134}
+#allpicksPage .all-picks-cell.no-pick{color:#536b82;background:#091725}
+@media(max-width:800px){
+  #allpicksPage .all-picks-toolbar{align-items:stretch;flex-direction:column}
+  #allpicksPage .all-picks-toolbar label{min-width:0;width:100%}
+  #allpicksPage .all-picks-game-col{min-width:190px;max-width:210px}
+  #allpicksPage .all-picks-score-col{left:190px;min-width:145px}
+  #allpicksPage .all-picks-player-head,#allpicksPage .all-picks-cell{min-width:112px}
+  #allpicksPage .all-picks-table th,#allpicksPage .all-picks-table td{padding:9px 8px}
+}
+@media(max-width:520px){
+  #allpicksPage .all-picks-score-col{position:static;left:auto}
+  #allpicksPage thead .all-picks-score-col{position:sticky;top:0}
+}

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=17" />
+  <link rel="stylesheet" href="styles.css?v=18" />
   <style>
     /* v9: forced visual polish; inline so browser CSS caching cannot hide the change */
     .home-score-strip{
@@ -136,6 +136,7 @@
       <nav>
         <button data-page="home" class="nav-btn active">Home</button>
         <button data-page="picks" class="nav-btn">Picks</button>
+        <button data-page="allpicks" class="nav-btn">All Picks</button>
         <button data-page="standings" class="nav-btn">Standings</button>
         <button data-page="history" class="nav-btn">My Runs</button>
         <button data-page="rules" class="nav-btn">Rules</button>
@@ -147,6 +148,7 @@
     <nav id="portraitNav" class="portrait-nav" aria-label="Mobile site navigation" hidden>
       <button data-page="home" class="nav-btn portrait-nav-btn active">Home</button>
       <button data-page="picks" class="nav-btn portrait-nav-btn">Picks</button>
+      <button data-page="allpicks" class="nav-btn portrait-nav-btn">All Picks</button>
       <button data-page="standings" class="nav-btn portrait-nav-btn">Standings</button>
       <button data-page="history" class="nav-btn portrait-nav-btn">My Runs</button>
       <button data-page="rules" class="nav-btn portrait-nav-btn">Rules</button>
@@ -214,6 +216,21 @@
         <div id="emptyGames" class="empty card" hidden>No games are loaded for this week yet.</div>
       </section>
 
+      <section id="allpicksPage" class="page" hidden>
+        <div class="section-head">
+          <div><div class="eyebrow">LOCKED GAMES</div><h2>All Picks</h2><p class="muted">See every player's revealed selection together after each game locks.</p></div>
+          <span class="privacy-chip">Future picks stay private</span>
+        </div>
+        <div class="toolbar card all-picks-toolbar">
+          <label>Week<select id="allPicksWeekSelect"></select></label>
+          <div class="all-picks-live-note"><span class="live-dot"></span><span>Live scores refresh automatically</span></div>
+        </div>
+        <div id="allPicksMeta" class="all-picks-meta"></div>
+        <div id="allPicksWrap" class="card all-picks-wrap">
+          <div class="home-empty">Open this page to load revealed picks.</div>
+        </div>
+      </section>
+
       <section id="standingsPage" class="page" hidden>
         <div class="section-head"><div><div class="eyebrow">LEADERBOARD</div><h2>Road to 100 Standings</h2></div><span class="privacy-chip">Picks reveal at kickoff</span></div>
         <div class="card table-wrap"><table><thead><tr><th>Rank</th><th>Player</th><th>Current run</th><th>Best run</th><th>Entries</th><th>Status</th><th>Progress</th></tr></thead><tbody id="standingsBody"></tbody></table></div>
@@ -238,9 +255,9 @@
           <article class="card rule-card"><div class="rule-number">3</div><div><h3>Picks stay completely private</h3><p>Before a game kicks off, other players cannot see your selection — or even tell that you made a selection in that game. No hidden-pick marker or future-pick total is exposed.</p></div></article>
           <article class="card rule-card"><div class="rule-number">4</div><div><h3>Each game locks at kickoff</h3><p>You may add, change, or remove your pick until that game’s scheduled kickoff. At kickoff, the selection locks automatically and can no longer be changed by the player.</p></div></article>
           <article class="card rule-card"><div class="rule-number">5</div><div><h3>Picks reveal after kickoff</h3><p>Once an individual game kicks off, that selection may appear in the player’s revealed picks. Games that have not started remain completely invisible to everyone else.</p></div></article>
-          <article class="card rule-card danger-rule"><div class="rule-number">6</div><div><h3>One loss ends the run</h3><p>An incorrect pick ends the active run immediately for scoring purposes. Picks from games that kicked off earlier still count. Picks with a <strong>later kickoff time in that same week are void</strong> and do not count as wins or losses.</p></div></article>
+          <article class="card rule-card danger-rule"><div class="rule-number">6</div><div><h3>One loss ends the run</h3><p>An incorrect pick ends the active run immediately for scoring purposes. Picks from games that settled before the loss remain part of the completed run. Unsettled picks are preserved so they can carry into a new run if the player re-enters.</p></div></article>
           <article class="card rule-card"><div class="rule-number">7</div><div><h3>Same-time kickoffs are graded together</h3><p>If multiple selected games have the exact same kickoff time, they are treated as the same scoring group. A loss in that group does not erase the results of the other games in that same group.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">8</div><div><h3>Re-entry starts the next week</h3><p>If re-entry is allowed, a player who loses cannot start another run on the remaining games that week. The earliest possible new entry is the following week, subject to the season’s re-entry policy.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">8</div><div><h3>Immediate re-entry</h3><p>If re-entry is allowed, an eliminated player may start a new run immediately without commissioner approval. The new run starts at zero, and unsettled picks from the current week carry forward automatically, subject to the season’s re-entry limits.</p></div></article>
           <article class="card rule-card"><div class="rule-number">9</div><div><h3>Opening spreads & weekly spread requirements</h3><p>The site uses the opening spread captured for each game. A rule such as <strong>“at least 1 pick with a maximum favorite spread of 9.5”</strong> means at least one selected team must have a line of <strong>-9.5 or better</strong>. For example, -9.5, -7, +3, or +14 qualify; -10 or -14 do not.</p></div></article>
           <article class="card rule-card"><div class="rule-number">10</div><div><h3>Commissioner administration</h3><p>The commissioner may correct imported or historical picks, player records, and grading when necessary. Administrative overrides are separate from normal player access and are recorded by the site’s audit tools.</p></div></article>
         </div>
@@ -343,6 +360,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=18"></script>
 </body>
 </html>

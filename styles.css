@@ -929,3 +929,20 @@ input,select,textarea{font-size:16px}
 .all-picks-fixed-scroll{position:fixed;bottom:0;z-index:1000;height:20px;overflow-x:auto;overflow-y:hidden;background:#0b1726;border-top:1px solid var(--line);scrollbar-gutter:stable}.all-picks-fixed-scroll-inner{height:1px}.all-picks-fixed-scroll[hidden]{display:none!important}
 #allpicksPage .all-picks-scroll{scrollbar-width:none;-ms-overflow-style:none}#allpicksPage .all-picks-scroll::-webkit-scrollbar{height:0}
 @media(max-width:800px){.champion-banner{align-items:flex-start;padding:15px}.champion-trophy{font-size:2rem}.champion-history-row{align-items:flex-start;flex-direction:column}}
+
+
+/* v25: keep the All Picks column headers visible while vertically scrolling. */
+#allpicksPage .all-picks-fixed-head{
+  position:fixed;
+  z-index:19;
+  overflow:hidden;
+  background:#17304d;
+  border-bottom:1px solid #22374e;
+  box-shadow:0 8px 18px rgba(0,0,0,.22);
+}
+#allpicksPage .all-picks-fixed-head[hidden]{display:none!important}
+#allpicksPage .all-picks-fixed-head-inner{width:max-content}
+#allpicksPage .all-picks-fixed-head-table{margin:0;border-collapse:separate;border-spacing:0}
+#allpicksPage .all-picks-fixed-head-table thead th{position:static!important;top:auto!important}
+#allpicksPage .all-picks-fixed-head-table .all-picks-game-col,
+#allpicksPage .all-picks-fixed-head-table .all-picks-score-col{position:static!important;left:auto!important}

@@ -401,24 +401,69 @@ function wireAllPicksScrollbars(){
   const wrap=$('allPicksWrap');if(!wrap)return;
   const fixed=wrap.querySelector('.all-picks-fixed-scroll');
   const fixedInner=wrap.querySelector('.all-picks-fixed-scroll-inner');
+  const fixedHead=wrap.querySelector('.all-picks-fixed-head');
+  const fixedHeadInner=wrap.querySelector('.all-picks-fixed-head-inner');
   const tableScroll=wrap.querySelector('.all-picks-scroll');
   const table=wrap.querySelector('.all-picks-table');
-  if(!fixed||!fixedInner||!tableScroll||!table)return;
+  const originalHead=table?.querySelector('thead');
+  if(!fixed||!fixedInner||!fixedHead||!fixedHeadInner||!tableScroll||!table||!originalHead)return;
 
   let syncing=false;
-  const sizeBar=()=>{
+  let headTable=null;
+
+  const buildHead=()=>{
+    fixedHeadInner.innerHTML='';
+    headTable=table.cloneNode(false);
+    headTable.className=table.className+' all-picks-fixed-head-table';
+    const clonedHead=originalHead.cloneNode(true);
+    headTable.appendChild(clonedHead);
+    fixedHeadInner.appendChild(headTable);
+
+    const sourceCells=[...originalHead.querySelectorAll('th')];
+    const cloneCells=[...clonedHead.querySelectorAll('th')];
+    sourceCells.forEach((cell,i)=>{
+      const w=cell.getBoundingClientRect().width;
+      if(cloneCells[i]){
+        cloneCells[i].style.width=`${w}px`;
+        cloneCells[i].style.minWidth=`${w}px`;
+        cloneCells[i].style.maxWidth=`${w}px`;
+      }
+    });
+    headTable.style.width=`${table.scrollWidth}px`;
+  };
+
+  const syncHeaderScroll=()=>{
+    fixedHead.scrollLeft=tableScroll.scrollLeft;
+  };
+
+  const positionFixedElements=()=>{
     const rect=tableScroll.getBoundingClientRect();
+    const tableRect=table.getBoundingClientRect();
+    const topbar=document.querySelector('.topbar');
+    const topOffset=topbar?Math.max(0,topbar.getBoundingClientRect().bottom):0;
+
     fixed.style.left=`${Math.max(0,rect.left)}px`;
     fixed.style.width=`${Math.max(0,Math.min(rect.width,window.innerWidth-Math.max(0,rect.left)))}px`;
     fixedInner.style.width=`${table.scrollWidth}px`;
     fixed.hidden=table.scrollWidth<=tableScroll.clientWidth+1;
     if(!fixed.hidden)fixed.scrollLeft=tableScroll.scrollLeft;
+
+    fixedHead.style.left=`${Math.max(0,rect.left)}px`;
+    fixedHead.style.width=`${Math.max(0,Math.min(rect.width,window.innerWidth-Math.max(0,rect.left)))}px`;
+    fixedHead.style.top=`${topOffset}px`;
+    const originalHeadRect=originalHead.getBoundingClientRect();
+    const shouldShow=originalHeadRect.top<topOffset && tableRect.bottom>topOffset+originalHeadRect.height;
+    fixedHead.hidden=!shouldShow;
+    if(shouldShow)syncHeaderScroll();
   };
 
-  fixed.onscroll=()=>{if(syncing)return;syncing=true;tableScroll.scrollLeft=fixed.scrollLeft;syncing=false;};
-  tableScroll.onscroll=()=>{if(syncing)return;syncing=true;fixed.scrollLeft=tableScroll.scrollLeft;syncing=false;};
-  requestAnimationFrame(sizeBar);
-  if(window.ResizeObserver){const ro=new ResizeObserver(sizeBar);ro.observe(tableScroll);ro.observe(table);}
+  buildHead();
+  fixed.onscroll=()=>{if(syncing)return;syncing=true;tableScroll.scrollLeft=fixed.scrollLeft;syncHeaderScroll();syncing=false;};
+  tableScroll.onscroll=()=>{if(syncing)return;syncing=true;fixed.scrollLeft=tableScroll.scrollLeft;syncHeaderScroll();syncing=false;};
+  window.addEventListener('scroll',positionFixedElements,{passive:true});
+  window.addEventListener('resize',()=>{buildHead();positionFixedElements();},{passive:true});
+  requestAnimationFrame(positionFixedElements);
+  if(window.ResizeObserver){const ro=new ResizeObserver(()=>{buildHead();positionFixedElements();});ro.observe(tableScroll);ro.observe(table);}
 }
 
 async function renderAllPicks(silent=false){
@@ -490,7 +535,7 @@ async function renderAllPicks(silent=false){
   }).join('');
 
   meta.textContent=`Week ${week.week_number} · ${lockedGames.length} locked game${lockedGames.length===1?'':'s'} · ${players.length} player${players.length===1?'':'s'} · Updated ${new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}`;
-  wrap.innerHTML=`<div class="all-picks-scroll"><table class="all-picks-table"><thead><tr><th class="all-picks-game-col">Game</th><th class="all-picks-score-col">Score / status</th>${header}</tr></thead><tbody>${body}</tbody></table></div><div class="all-picks-fixed-scroll" aria-label="Horizontal scrollbar for All Picks"><div class="all-picks-fixed-scroll-inner"></div></div>`;wireAllPicksScrollbars();
+  wrap.innerHTML=`<div class="all-picks-scroll"><table class="all-picks-table"><thead><tr><th class="all-picks-game-col">Game</th><th class="all-picks-score-col">Score / status</th>${header}</tr></thead><tbody>${body}</tbody></table></div><div class="all-picks-fixed-head" hidden aria-hidden="true"><div class="all-picks-fixed-head-inner"></div></div><div class="all-picks-fixed-scroll" aria-label="Horizontal scrollbar for All Picks"><div class="all-picks-fixed-scroll-inner"></div></div>`;wireAllPicksScrollbars();
 }
 
 function renderHistory(){

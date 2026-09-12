@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=21" />
+  <link rel="stylesheet" href="styles.css?v=23" />
   <style>
     /* v9: forced visual polish; inline so browser CSS caching cannot hide the change */
     .home-score-strip{
@@ -157,7 +157,7 @@
           </div>
         </div>
         <div class="home-score-card home-score-strip card">
-          <span id="homeRoadLabel">ROAD TO 100</span>
+          <span id="currentRoadLabel">ROAD TO 100 #1</span>
           <strong id="homeWins">0</strong>
           <small>wins on current run</small>
           <div class="progress-track"><div id="homeRunBar" class="progress-fill" style="width:0%"></div></div>
@@ -178,7 +178,7 @@
         </div>
         <div class="hero-row">
           <div>
-            <div id="picksRoadLabel" class="eyebrow">ROAD TO 100</div>
+            <div class="eyebrow">ACTIVE RUN</div>
             <h2 id="welcomeTitle">Road to 100</h2>
             <p id="weekSubtitle" class="muted">Choose a week to begin.</p>
           </div>
@@ -224,8 +224,9 @@
       </section>
 
       <section id="standingsPage" class="page" hidden>
-        <div class="section-head"><div><div class="eyebrow">LEADERBOARD</div><h2 id="standingsTitle">Road to 100 Standings</h2></div><span class="privacy-chip">Picks reveal at kickoff</span></div>
+        <div class="section-head"><div><div id="standingsRoadLabel" class="eyebrow">ROAD TO 100 LEADERBOARD</div><h2>Road to 100 Standings</h2></div><span class="privacy-chip">Picks reveal at kickoff</span></div>
         <div class="card table-wrap"><table><thead><tr><th>Rank</th><th>Player</th><th>Current run</th><th>Best run</th><th>Entries</th><th>Status</th><th>Progress</th></tr></thead><tbody id="standingsBody"></tbody></table></div>
+        <div class="card champion-history-card"><div class="panel-kicker">CHAMPIONSHIP HISTORY</div><div id="championHistory" class="champion-history"></div></div>
       </section>
 
       <section id="historyPage" class="page" hidden>
@@ -252,7 +253,7 @@
           <article class="card rule-card"><div class="rule-number">8</div><div><h3>Immediate re-entry</h3><p>If re-entry is allowed, an eliminated player may start a new run immediately without commissioner approval. The new run starts at zero, and unsettled picks from the current week carry forward automatically, subject to the season’s re-entry limits.</p></div></article>
           <article class="card rule-card"><div class="rule-number">9</div><div><h3>Opening spreads & weekly spread requirements</h3><p>The site uses the opening spread captured for each game. A rule such as <strong>“at least 1 pick with a maximum favorite spread of 9.5”</strong> means at least one selected team must have a line of <strong>-9.5 or better</strong>. For example, -9.5, -7, +3, or +14 qualify; -10 or -14 do not.</p></div></article>
           <article class="card rule-card"><div class="rule-number">10</div><div><h3>Commissioner administration</h3><p>The commissioner may correct imported or historical picks, player records, and grading when necessary. Administrative overrides are separate from normal player access and are recorded by the site’s audit tools.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">11</div><div><h3>Winning a Road to 100</h3><p>When a player reaches <strong>100 correct picks</strong>, that Road to 100 ends immediately and the player is crowned champion. The next Road to 100 starts automatically. Everyone begins the new contest at zero, while picks from games that are still unsettled carry forward automatically.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">11</div><div><h3>New Road to 100 after a champion</h3><p>When a player reaches 100 and is declared champion, that Road to 100 closes immediately and the next one begins automatically. Every participant starts the new contest at zero on Entry #1. Picks already made for games that are not final or canceled carry into the new contest automatically; completed games stay with the finished contest.</p></div></article>
         </div>
 
         <div class="card rules-note"><strong>Weekly settings can change.</strong><span>The “Current Week” panel above reflects the active week’s requirements. When a week has a commissioner override, those settings take precedence over the season defaults.</span></div>
@@ -353,6 +354,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=21"></script>
+  <script src="app.js?v=23"></script>
 </body>
 </html>

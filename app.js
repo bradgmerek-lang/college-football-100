@@ -401,12 +401,21 @@ function wireAllPicksScrollbars(){
   const wrap=$('allPicksWrap');if(!wrap)return;
   const fixed=wrap.querySelector('.all-picks-fixed-scroll');
   const fixedInner=wrap.querySelector('.all-picks-fixed-scroll-inner');
-  const fixedHead=wrap.querySelector('.all-picks-fixed-head');
-  const fixedHeadInner=wrap.querySelector('.all-picks-fixed-head-inner');
   const tableScroll=wrap.querySelector('.all-picks-scroll');
   const table=wrap.querySelector('.all-picks-table');
   const originalHead=table?.querySelector('thead');
-  if(!fixed||!fixedInner||!fixedHead||!fixedHeadInner||!tableScroll||!table||!originalHead)return;
+  if(!fixed||!fixedInner||!tableScroll||!table||!originalHead)return;
+
+  // Use a viewport-level header overlay. Keeping it outside the table's
+  // overflow containers makes the frozen names reliable in desktop browsers.
+  document.querySelectorAll('body > .all-picks-fixed-head').forEach(el=>el.remove());
+  const fixedHead=document.createElement('div');
+  fixedHead.className='all-picks-fixed-head';
+  fixedHead.hidden=true;
+  fixedHead.setAttribute('aria-hidden','true');
+  fixedHead.innerHTML='<div class="all-picks-fixed-head-inner"></div>';
+  document.body.appendChild(fixedHead);
+  const fixedHeadInner=fixedHead.firstElementChild;
 
   let syncing=false;
   let headTable=null;
@@ -432,27 +441,33 @@ function wireAllPicksScrollbars(){
     headTable.style.width=`${table.scrollWidth}px`;
   };
 
-  const syncHeaderScroll=()=>{
-    fixedHead.scrollLeft=tableScroll.scrollLeft;
-  };
+  const syncHeaderScroll=()=>{ fixedHead.scrollLeft=tableScroll.scrollLeft; };
 
   const positionFixedElements=()=>{
+    if(state.currentPage!=='allpicks'){
+      fixedHead.hidden=true;
+      fixed.hidden=true;
+      return;
+    }
     const rect=tableScroll.getBoundingClientRect();
     const tableRect=table.getBoundingClientRect();
     const topbar=document.querySelector('.topbar');
     const topOffset=topbar?Math.max(0,topbar.getBoundingClientRect().bottom):0;
+    const left=Math.max(0,rect.left);
+    const width=Math.max(0,Math.min(rect.width,window.innerWidth-left));
 
-    fixed.style.left=`${Math.max(0,rect.left)}px`;
-    fixed.style.width=`${Math.max(0,Math.min(rect.width,window.innerWidth-Math.max(0,rect.left)))}px`;
+    fixed.style.left=`${left}px`;
+    fixed.style.width=`${width}px`;
     fixedInner.style.width=`${table.scrollWidth}px`;
     fixed.hidden=table.scrollWidth<=tableScroll.clientWidth+1;
     if(!fixed.hidden)fixed.scrollLeft=tableScroll.scrollLeft;
 
-    fixedHead.style.left=`${Math.max(0,rect.left)}px`;
-    fixedHead.style.width=`${Math.max(0,Math.min(rect.width,window.innerWidth-Math.max(0,rect.left)))}px`;
+    fixedHead.style.left=`${left}px`;
+    fixedHead.style.width=`${width}px`;
     fixedHead.style.top=`${topOffset}px`;
     const originalHeadRect=originalHead.getBoundingClientRect();
-    const shouldShow=originalHeadRect.top<topOffset && tableRect.bottom>topOffset+originalHeadRect.height;
+    const headHeight=Math.max(originalHeadRect.height, originalHead.offsetHeight||0);
+    const shouldShow=tableRect.top < topOffset && tableRect.bottom > topOffset + headHeight;
     fixedHead.hidden=!shouldShow;
     if(shouldShow)syncHeaderScroll();
   };
@@ -535,7 +550,7 @@ async function renderAllPicks(silent=false){
   }).join('');
 
   meta.textContent=`Week ${week.week_number} · ${lockedGames.length} locked game${lockedGames.length===1?'':'s'} · ${players.length} player${players.length===1?'':'s'} · Updated ${new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}`;
-  wrap.innerHTML=`<div class="all-picks-scroll"><table class="all-picks-table"><thead><tr><th class="all-picks-game-col">Game</th><th class="all-picks-score-col">Score / status</th>${header}</tr></thead><tbody>${body}</tbody></table></div><div class="all-picks-fixed-head" hidden aria-hidden="true"><div class="all-picks-fixed-head-inner"></div></div><div class="all-picks-fixed-scroll" aria-label="Horizontal scrollbar for All Picks"><div class="all-picks-fixed-scroll-inner"></div></div>`;wireAllPicksScrollbars();
+  wrap.innerHTML=`<div class="all-picks-scroll"><table class="all-picks-table"><thead><tr><th class="all-picks-game-col">Game</th><th class="all-picks-score-col">Score / status</th>${header}</tr></thead><tbody>${body}</tbody></table></div><div class="all-picks-fixed-scroll" aria-label="Horizontal scrollbar for All Picks"><div class="all-picks-fixed-scroll-inner"></div></div>`;wireAllPicksScrollbars();
 }
 
 function renderHistory(){

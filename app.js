@@ -399,18 +399,26 @@ function allPicksMatchRow(g){
 }
 function wireAllPicksScrollbars(){
   const wrap=$('allPicksWrap');if(!wrap)return;
-  const top=wrap.querySelector('.all-picks-top-scroll');
-  const topInner=wrap.querySelector('.all-picks-top-scroll-inner');
-  const bottom=wrap.querySelector('.all-picks-scroll');
+  const fixed=wrap.querySelector('.all-picks-fixed-scroll');
+  const fixedInner=wrap.querySelector('.all-picks-fixed-scroll-inner');
+  const tableScroll=wrap.querySelector('.all-picks-scroll');
   const table=wrap.querySelector('.all-picks-table');
-  if(!top||!topInner||!bottom||!table)return;
-  requestAnimationFrame(()=>{
-    topInner.style.width=`${table.scrollWidth}px`;
-    top.hidden=table.scrollWidth<=bottom.clientWidth+1;
-    let syncing=false;
-    top.onscroll=()=>{if(syncing)return;syncing=true;bottom.scrollLeft=top.scrollLeft;syncing=false;};
-    bottom.onscroll=()=>{if(syncing)return;syncing=true;top.scrollLeft=bottom.scrollLeft;syncing=false;};
-  });
+  if(!fixed||!fixedInner||!tableScroll||!table)return;
+
+  let syncing=false;
+  const sizeBar=()=>{
+    const rect=tableScroll.getBoundingClientRect();
+    fixed.style.left=`${Math.max(0,rect.left)}px`;
+    fixed.style.width=`${Math.max(0,Math.min(rect.width,window.innerWidth-Math.max(0,rect.left)))}px`;
+    fixedInner.style.width=`${table.scrollWidth}px`;
+    fixed.hidden=table.scrollWidth<=tableScroll.clientWidth+1;
+    if(!fixed.hidden)fixed.scrollLeft=tableScroll.scrollLeft;
+  };
+
+  fixed.onscroll=()=>{if(syncing)return;syncing=true;tableScroll.scrollLeft=fixed.scrollLeft;syncing=false;};
+  tableScroll.onscroll=()=>{if(syncing)return;syncing=true;fixed.scrollLeft=tableScroll.scrollLeft;syncing=false;};
+  requestAnimationFrame(sizeBar);
+  if(window.ResizeObserver){const ro=new ResizeObserver(sizeBar);ro.observe(tableScroll);ro.observe(table);}
 }
 
 async function renderAllPicks(silent=false){
@@ -482,7 +490,7 @@ async function renderAllPicks(silent=false){
   }).join('');
 
   meta.textContent=`Week ${week.week_number} · ${lockedGames.length} locked game${lockedGames.length===1?'':'s'} · ${players.length} player${players.length===1?'':'s'} · Updated ${new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}`;
-  wrap.innerHTML=`<div class="all-picks-top-scroll" aria-label="Horizontal scrollbar for All Picks"><div class="all-picks-top-scroll-inner"></div></div><div class="all-picks-scroll"><table class="all-picks-table"><thead><tr><th class="all-picks-game-col">Game</th><th class="all-picks-score-col">Score / status</th>${header}</tr></thead><tbody>${body}</tbody></table></div>`;wireAllPicksScrollbars();
+  wrap.innerHTML=`<div class="all-picks-scroll"><table class="all-picks-table"><thead><tr><th class="all-picks-game-col">Game</th><th class="all-picks-score-col">Score / status</th>${header}</tr></thead><tbody>${body}</tbody></table></div><div class="all-picks-fixed-scroll" aria-label="Horizontal scrollbar for All Picks"><div class="all-picks-fixed-scroll-inner"></div></div>`;wireAllPicksScrollbars();
 }
 
 function renderHistory(){

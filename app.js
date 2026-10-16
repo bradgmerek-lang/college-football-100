@@ -197,7 +197,7 @@ async function renderHome(){
   if(state.profile?.role==='commissioner')$('homeCommissionerStats').innerHTML=`<div><strong>${state.games.length}</strong><span>games loaded</span></div><div><strong>${open}</strong><span>still open</span></div><div><strong>${state.standings.length}</strong><span>players</span></div>`;
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
-async function loadHomeLeaders(){if(state.demo){state.standings=[{user_id:'demo',display_name:'Brad',current_wins:12,best_wins:12,entry_count:1,status:'active'},{user_id:'d2',display_name:'Jordan',current_wins:9,best_wins:18,entry_count:2,status:'active'}];}else if(state.currentSeason){const {data}=await sb.rpc('get_standings',{p_season_id:state.currentSeason.id});state.standings=data||[];}$('homeLeaders').innerHTML=(state.standings||[]).slice(0,5).map((x,i)=>`<div class="leader-row"><span>${i+1}</span><strong>${escapeHtml(x.display_name)}</strong><b>${x.current_wins}</b></div>`).join('')||'<div class="home-empty">Standings will appear here.</div>';}
+async function loadHomeLeaders(){if(state.demo){state.standings=[{user_id:'demo',display_name:'Brad',current_wins:12,best_wins:12,entry_count:1,status:'active'},{user_id:'d2',display_name:'Jordan',current_wins:9,best_wins:18,entry_count:2,status:'active'}];}else if(state.currentSeason){const {data}=await sb.rpc('get_gridiron_standings',{p_season_id:state.currentSeason.id});state.standings=data||[];}$('homeLeaders').innerHTML=(state.standings||[]).slice(0,5).map((x,i)=>`<div class="leader-row"><span>${i+1}</span><strong>${escapeHtml(x.display_name)}</strong><b>${x.current_wins}</b></div>`).join('')||'<div class="home-empty">Standings will appear here.</div>';}
 function pickedFor(gameId){return state.picks.find(p=>p.game_id===gameId);}
 function renderGames(){
   const filter=$('gameFilter').value;
@@ -264,7 +264,7 @@ function renderRequirements(){const latest=latestSeasonEntry();if(!state.activeE
 async function renderStandings(){
   if(state.demo){state.standings=[{user_id:'demo',display_name:'Brad',current_wins:12,best_wins:12,entry_count:1,status:'active'},{user_id:'d2',display_name:'Jordan',current_wins:44,best_wins:44,entry_count:3,status:'active'},{user_id:'d3',display_name:'Taylor',current_wins:18,best_wins:21,entry_count:2,status:'active'}];}
   else{
-    const {data,error}=await sb.rpc('get_standings',{p_season_id:state.currentSeason.id});
+    const {data,error}=await sb.rpc('get_gridiron_standings',{p_season_id:state.currentSeason.id});
     if(error)return toast(error.message);
     state.standings=data||[];
   }
@@ -500,7 +500,7 @@ async function renderAllPicks(silent=false){
   await refreshEspnScores();
   const [{data:games,error:gamesError},{data:standingRows,error:standingsError}]=await Promise.all([
     sb.from('games').select('id,week_id,away_team,home_team,kickoff,status,away_score,home_score,live_home_score,live_away_score,live_status,live_period,live_clock').eq('week_id',week.id).order('kickoff'),
-    sb.rpc('get_standings',{p_season_id:state.currentSeason.id})
+    sb.rpc('get_gridiron_standings',{p_season_id:state.currentSeason.id})
   ]);
   if(gamesError){wrap.innerHTML=`<div class="home-empty">${escapeHtml(gamesError.message)}</div>`;return;}
   if(standingsError){wrap.innerHTML=`<div class="home-empty">${escapeHtml(standingsError.message)}</div>`;return;}
@@ -543,7 +543,7 @@ async function renderAllPicks(silent=false){
       if(!pick)return '<td class="all-picks-cell no-pick"><span>—</span></td>';
       const team=pick.selected_team||(pick.selected_side==='home'?g.home_team:g.away_team);
       const result=String(pick.result||'pending').toLowerCase();
-      const label=result==='correct'?'✓':result==='incorrect'?'✕':result==='void'?'VOID':'LIVE';
+      const label=result==='correct'?'✓':result==='incorrect'?'✕':result==='push'?'PUSH':result==='void'?'VOID':'LIVE';
       return `<td class="all-picks-cell result-${escapeHtml(result)}"><strong>${escapeHtml(team)}</strong><span>${escapeHtml(label)}</span></td>`;
     }).join('');
     return `<tr><td class="all-picks-game-col">${allPicksMatchRow(g)}</td><td class="all-picks-score-col">${allPicksGameStatus(g)}</td>${cells}</tr>`;
@@ -639,7 +639,7 @@ async function saveAdminPick(gameId,button){
  } finally {button.disabled=false;}
 }
 
-function startDemo(){state.demo=true;state.user={id:'demo',email:'demo@example.com'};state.profile={id:'demo',display_name:'Brad',role:'commissioner'};state.seasons=[{id:'ds1',year:new Date().getFullYear(),is_active:true}];state.currentSeason=state.seasons[0];state.contests=[{id:'dc1',season_id:'ds1',contest_number:1,status:'active'}];state.activeContest=state.currentContest=state.contests[0];state.weeks=[{id:'dw1',season_id:'ds1',week_number:1,is_current:true}];state.currentWeek=state.weeks[0];state.games=structuredClone(demoGames);state.entries=[{id:'de1',season_id:'ds1',contest_id:'dc1',user_id:'demo',entry_number:1,status:'active',current_wins:12,best_wins:12,created_at:new Date().toISOString()}];state.activeEntry=state.entries[0];state.picks=[];state.rules={min_picks:5,max_picks:0,spread_requirements:[{max_spread:-9.5,required_count:1}]};showApp();fillSelectors();renderTop();renderGames();renderRequirements();renderHome();}
+function startDemo(){state.demo=true;state.user={id:'demo',email:'demo@example.com'};state.profile={id:'demo',display_name:'Brad',role:'commissioner'};state.seasons=[{id:'ds1',year:new Date().getFullYear(),is_active:true}];state.currentSeason=state.seasons[0];state.contests=[{id:'dc1',season_id:'ds1',contest_number:1,status:'active'}];state.activeContest=state.currentContest=state.contests[0];state.weeks=[{id:'dw1',season_id:'ds1',week_number:1,is_current:true}];state.currentWeek=state.weeks[0];state.games=structuredClone(demoGames);state.entries=[{id:'de1',season_id:'ds1',contest_id:'dc1',user_id:'demo',entry_number:1,status:'active',current_wins:12,best_wins:12,created_at:new Date().toISOString()}];state.activeEntry=state.entries[0];state.picks=[];state.rules={min_picks:10,max_picks:10,spread_requirements:[]};state.seasonSettings={min_picks:10,max_picks:10,push_points:.5};showApp();fillSelectors();renderTop();renderGames();renderRequirements();renderHome();}
 async function playerReenter(){
   const latest=latestSeasonEntry();
   if(state.activeEntry)return switchPage('picks');
@@ -669,8 +669,123 @@ async function checkForContestRollover(){
 }
 setInterval(checkForContestRollover,60000);
 
+
+/* ===== GRIDIRON LINES v1 OVERRIDES ===== */
+function renderContestChrome(){
+  const cr=$('currentRoadLabel');if(cr)cr.textContent='SEASON POINTS';
+  const sr=$('standingsRoadLabel');if(sr)sr.textContent='SEASON LEADERBOARD';
+  const cb=$('championBanner');if(cb){cb.hidden=true;cb.innerHTML='';}
+}
+function requiredPickCount(){
+  const max=Number(state.rules?.max_picks||0),min=Number(state.rules?.min_picks||0);
+  return max||min||Number(state.seasonSettings?.max_picks||state.seasonSettings?.min_picks||10)||10;
+}
+async function seasonScore(){
+  if(state.demo)return {points:62.5,wins:62,losses:37,pushes:1,ats_pct:62.5};
+  if(!state.currentSeason)return {points:0,wins:0,losses:0,pushes:0,ats_pct:0};
+  const {data}=await sb.rpc('get_gridiron_standings',{p_season_id:state.currentSeason.id});
+  return (data||[]).find(x=>x.user_id===state.user?.id)||{points:0,wins:0,losses:0,pushes:0,ats_pct:0};
+}
+function renderTop(){
+  renderContestChrome();
+  const n=state.picks.length,goal=requiredPickCount(),pct=goal?Math.min(100,n/goal*100):0;
+  $('runWins').textContent=n;$('runBar').style.width=`${pct}%`;
+  const pg=$('pickGoalText');if(pg)pg.textContent=`/ ${goal} picks`;
+  $('runStatus').textContent=n===goal?'CARD COMPLETE':'CARD OPEN';
+  $('welcomeTitle').textContent=`Week ${state.currentWeek?.week_number||''} · My Card`;
+  $('weekSubtitle').textContent=`${n} of ${goal} picks made · each selection locks at kickoff`;
+  const rc=$('reentryCard');if(rc)rc.hidden=true;
+}
+async function renderHome(){
+  if(!$('homePage'))return;
+  renderContestChrome();
+  const score=await seasonScore(),goal=requiredPickCount(),picked=state.picks.length,open=state.games.filter(g=>!locked(g)).length;
+  $('homeGreeting').textContent=`Welcome back, ${state.profile?.display_name||'Player'}`;
+  $('homeWins').textContent=Number(score.points||0).toFixed(Number(score.points||0)%1?1:0);
+  $('homeRunBar').style.width=`${goal?Math.min(100,picked/goal*100):0}%`;
+  $('homeWeekTitle').textContent=state.currentWeek?`Week ${state.currentWeek.week_number}`:'Current week';
+  $('homeWeekSummary').innerHTML=`<div><strong>${picked}/${goal}</strong><span>picks made</span></div><div><strong>${score.wins}-${score.losses}-${score.pushes}</strong><span>season ATS</span></div><div><strong>${open}</strong><span>games open</span></div>`;
+  const upcoming=state.picks.map(p=>({p,g:state.games.find(g=>g.id===p.game_id)})).filter(x=>x.g&&!locked(x.g)).sort((a,b)=>new Date(a.g.kickoff)-new Date(b.g.kickoff)).slice(0,3);
+  $('homeUpcoming').innerHTML=upcoming.length?upcoming.map(({p,g})=>`<div class="upcoming-row"><div><strong>${escapeHtml(g[p.selected_side+'_team'])} ${fmtSpread(g[p.selected_side+'_spread'])}</strong><span>${escapeHtml(g.away_team)} @ ${escapeHtml(g.home_team)}</span></div><small>${new Date(g.kickoff).toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'})}</small></div>`).join(''):'<div class="home-empty">No upcoming selections yet.</div>';
+  const msg=state.seasonSettings?.commissioner_message?.trim();$('homeMessage').hidden=!msg;$('homeMessage').innerHTML=msg?`<strong>Commissioner message</strong><span>${escapeHtml(msg)}</span>`:'';
+  $('homeMakePicks').textContent=picked===goal?'Review My Card':"Make This Week's Picks";
+  await loadHomeLeaders();
+  $('homeCommissionerPanel').hidden=state.profile?.role!=='commissioner';
+  if(state.profile?.role==='commissioner')$('homeCommissionerStats').innerHTML=`<div><strong>${state.games.length}</strong><span>games loaded</span></div><div><strong>${goal}</strong><span>required picks</span></div><div><strong>${state.standings.length}</strong><span>players</span></div>`;
+}
+async function loadHomeLeaders(){
+  if(state.demo)state.standings=[{user_id:'demo',display_name:'Brad',points:62.5,wins:62,losses:37,pushes:1},{user_id:'d2',display_name:'Jordan',points:60,wins:60,losses:40,pushes:0}];
+  else if(state.currentSeason){const {data}=await sb.rpc('get_gridiron_standings',{p_season_id:state.currentSeason.id});state.standings=data||[];}
+  $('homeLeaders').innerHTML=(state.standings||[]).slice(0,5).map((x,i)=>`<div class="leader-row"><span>${i+1}</span><strong>${escapeHtml(x.display_name)}</strong><b>${Number(x.points||0).toFixed(Number(x.points||0)%1?1:0)} pts</b></div>`).join('')||'<div class="home-empty">Standings will appear here.</div>';
+}
+function renderRequirements(){
+  const goal=requiredPickCount(),n=state.picks.length;
+  $('requirementsCard').innerHTML=`<h3>Week ${state.currentWeek?.week_number||''} card</h3><div class="req-list"><span class="req ${n===goal?'met':'unmet'}">${n}/${goal} picks</span><span class="req met">One frozen line per game</span><span class="req met">Push = ${Number(state.seasonSettings?.push_points??0.5)} pts</span></div><p class="micro">Make exactly ${goal} selections. Picks lock individually at kickoff; the displayed spread is the same official pool line for every competitor.</p>`;
+}
+async function renderStandings(){
+  if(state.demo)state.standings=[{user_id:'demo',display_name:'Brad',points:62.5,wins:62,losses:37,pushes:1,ats_pct:62.5},{user_id:'d2',display_name:'Jordan',points:60,wins:60,losses:40,pushes:0,ats_pct:60}];
+  else{const {data,error}=await sb.rpc('get_gridiron_standings',{p_season_id:state.currentSeason.id});if(error)return toast(error.message);state.standings=data||[];}
+  const label=$('standingsRoadLabel');if(label)label.textContent='SEASON LEADERBOARD';
+  $('standingsBody').innerHTML=state.standings.map((s,i)=>`<tr><td><strong>${i+1}</strong></td><td><button class="player-picks-link" data-user="${s.user_id}" data-name="${escapeHtml(s.display_name)}">${escapeHtml(s.display_name)}</button></td><td><strong>${Number(s.points||0).toFixed(Number(s.points||0)%1?1:0)}</strong></td><td>${s.wins||0}</td><td>${s.losses||0}</td><td>${s.pushes||0}</td><td>${Number(s.ats_pct||0).toFixed(1)}%</td></tr>`).join('');
+  const history=$('championHistory');if(history)history.innerHTML=`<div class="champion-history-row"><span>Push value</span><strong>${Number(state.seasonSettings?.push_points??0.5)} point${Number(state.seasonSettings?.push_points??0.5)===1?'':'s'}</strong></div>`;
+}
+async function renderHistory(){
+  if(state.demo){$('historyList').innerHTML='<div class="run-card card"><div class="run-number">7</div><div><strong>Week 7</strong><div class="muted">10 picks</div></div><div><strong>7.5 points</strong><div class="status-active">7-2-1 ATS</div></div></div>';return;}
+  const {data,error}=await sb.rpc('get_gridiron_week_results',{p_season_id:state.currentSeason.id,p_user_id:state.user.id});
+  if(error){$('historyList').innerHTML=`<div class="home-empty">${escapeHtml(error.message)}</div>`;return;}
+  $('historyList').innerHTML=(data||[]).filter(x=>Number(x.picks)>0).map(x=>`<div class="run-card card"><div class="run-number">${x.week_number}</div><div><strong>Week ${x.week_number}</strong><div class="muted">${x.picks} picks graded/placed</div></div><div><strong>${Number(x.points||0).toFixed(Number(x.points||0)%1?1:0)} points</strong><div class="status-active">${x.wins}-${x.losses}-${x.pushes} ATS</div></div></div>`).join('')||'<div class="empty card">No weekly results yet.</div>';
+}
+async function fetchRevealedPicks(userId){
+  const weekId=$('allPicksWeekSelect')?.value||null;
+  const r=await sb.rpc('get_gridiron_revealed_picks',{p_season_id:state.currentSeason.id,p_user_id:userId,p_week_id:weekId});
+  if(r.error)return r;
+  return {data:(r.data||[]).map(x=>({...x,result:x.ats_result==='win'?'correct':x.ats_result==='loss'?'incorrect':x.ats_result==='push'?'push':'pending'})),error:null};
+}
+async function saveSeasonSettings(){
+  if(state.demo)return toast('Settings saved in demo preview.');
+  const count=Math.max(1,Number($('globalMinPicks').value||10)),push=Math.max(0,Math.min(1,Number($('pushPoints').value||0.5)));
+  $('globalMaxPicks').value=count;
+  const payload={season_id:state.currentSeason.id,min_picks:count,max_picks:count,reentry_policy:'disabled',max_entries:1,registration_open:$('registrationOpen').checked,commissioner_message:$('commissionerMessage').value,spread_requirements:[],push_points:push};
+  const {error}=await sb.from('season_settings').upsert(payload,{onConflict:'season_id'});toast(error?error.message:'Gridiron Lines season settings saved.');if(!error){state.seasonSettings={...(state.seasonSettings||{}),...payload};await loadWeek();}
+}
+async function saveWeekSettings(){
+  if(state.demo)return toast('Week settings saved in demo preview.');
+  const weekId=$('commissionerWeekSelect').value,enabled=$('weekOverrideEnabled').checked,count=Math.max(1,Number($('weekMinPicks').value||$('globalMinPicks').value||10));
+  $('weekMaxPicks').value=count;
+  const payload={week_id:weekId,override_enabled:enabled,min_picks:count,max_picks:count,spread_requirements:[]};
+  const {error}=await sb.from('week_settings').upsert(payload,{onConflict:'week_id'});toast(error?error.message:'Week pick count saved.');if(!error&&weekId===state.currentWeek.id)await loadWeek();
+}
+async function renderCommissioner(){
+  if(state.profile?.role!=='commissioner')return;
+  if(state.demo){$('globalMinPicks').value=10;$('globalMaxPicks').value=10;$('pushPoints').value=.5;renderAdminGames();renderDemoPlayers();return;}
+  const {data:ss}=await sb.from('season_settings').select('*').eq('season_id',state.currentSeason.id).maybeSingle();
+  if(ss){$('globalMinPicks').value=ss.max_picks||ss.min_picks||10;$('globalMaxPicks').value=ss.max_picks||ss.min_picks||10;$('pushPoints').value=ss.push_points??.5;$('registrationOpen').checked=ss.registration_open;$('commissionerMessage').value=ss.commissioner_message||'';}
+  await loadWeekOverride();renderAdminGames();await loadAdminPlayers();
+}
+async function loadWeekOverride(){
+  if(state.demo)return;const weekId=$('commissionerWeekSelect').value||state.currentWeek?.id;if(!weekId)return;
+  const {data}=await sb.from('week_settings').select('*').eq('week_id',weekId).maybeSingle();
+  $('weekOverrideEnabled').checked=!!data?.override_enabled;$('weekOverrideFields').hidden=!data?.override_enabled;
+  const count=data?.max_picks||data?.min_picks||$('globalMinPicks').value||10;$('weekMinPicks').value=count;$('weekMaxPicks').value=count;
+}
+function renderAdminGames(){
+  $('adminGamesList').innerHTML=state.games.map(g=>`<div class="admin-game"><div><strong>${escapeHtml(g.away_team)} @ ${escapeHtml(g.home_team)}</strong><br><small>${new Date(g.kickoff).toLocaleString()} · official line ${fmtSpread(g.away_spread)} / ${fmtSpread(g.home_spread)}</small></div><div class="button-row"><span class="privacy-chip">LINE FROZEN</span><button class="secondary edit-game" data-id="${g.id}">Edit</button>${g.status==='final'?'<span class="status-active">FINAL</span>':`<button class="secondary grade-game" data-id="${g.id}">Grade</button>`}</div></div>`).join('');
+}
+async function saveGame(){
+  const id=$('gameEditId').value,payload={week_id:$('commissionerWeekSelect').value||state.currentWeek.id,away_team:$('awayTeam').value.trim(),home_team:$('homeTeam').value.trim(),kickoff:new Date($('kickoff').value).toISOString(),network:$('network').value.trim()||null,away_spread:$('awaySpread').value===''?null:Number($('awaySpread').value),home_spread:$('homeSpread').value===''?null:Number($('homeSpread').value)};
+  if(state.demo){return toast('Game saved in demo.');}
+  if(id){
+    const g=state.games.find(x=>x.id===id),spreadChanged=Number(payload.away_spread)!==Number(g?.away_spread)||Number(payload.home_spread)!==Number(g?.home_spread);
+    const base={week_id:payload.week_id,away_team:payload.away_team,home_team:payload.home_team,kickoff:payload.kickoff,network:payload.network};
+    let {error}=await sb.from('games').update(base).eq('id',id);
+    if(!error&&spreadChanged){if(!confirm('This changes the official frozen pool line for EVERY player. Continue?'))return loadWeek();const r=await sb.rpc('commissioner_set_pool_spread',{p_game_id:id,p_away_spread:payload.away_spread,p_home_spread:payload.home_spread});error=r.error;}
+    toast(error?error.message:'Game saved. Official line is frozen for everyone.');if(!error)await loadWeek();return;
+  }
+  const {error}=await sb.from('games').insert(payload);toast(error?error.message:'Game added. Its first spread is now the official frozen pool line.');if(!error)await loadWeek();
+}
+
 function bindEvents(){
- document.querySelectorAll('[data-auth-tab]').forEach(b=>b.onclick=()=>setAuthTab(b.dataset.authTab));document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>switchPage(b.dataset.page));$('demoButton').onclick=startDemo;$('gameFilter').onchange=renderGames;$('homeMakePicks').onclick=()=>{const latest=latestSeasonEntry();if(!state.activeEntry&&latest?.status==='lost')playerReenter();else switchPage('picks');};if($('reenterPoolButton'))$('reenterPoolButton').onclick=playerReenter;$('homeViewPicks').onclick=() => switchPage('picks');$('homeViewStandings').onclick=() => switchPage('standings');$('homeCommissionerButton').onclick=() => switchPage('commissioner');$('closePlayerPicks').onclick=()=>$('playerPicksDialog').close();$('standingsBody').onclick=e=>{const b=e.target.closest('.player-picks-link');if(b)showPlayerPicks(b.dataset.user,b.dataset.name);};if($('allPicksWeekSelect'))$('allPicksWeekSelect').onchange=()=>renderAllPicks();
+ document.querySelectorAll('[data-auth-tab]').forEach(b=>b.onclick=()=>setAuthTab(b.dataset.authTab));document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>switchPage(b.dataset.page));$('demoButton').onclick=startDemo;$('gameFilter').onchange=renderGames;$('homeMakePicks').onclick=()=>switchPage('picks');if($('reenterPoolButton'))$('reenterPoolButton').onclick=playerReenter;$('homeViewPicks').onclick=() => switchPage('picks');$('homeViewStandings').onclick=() => switchPage('standings');$('homeCommissionerButton').onclick=() => switchPage('commissioner');$('closePlayerPicks').onclick=()=>$('playerPicksDialog').close();$('standingsBody').onclick=e=>{const b=e.target.closest('.player-picks-link');if(b)showPlayerPicks(b.dataset.user,b.dataset.name);};if($('allPicksWeekSelect'))$('allPicksWeekSelect').onchange=()=>renderAllPicks();
  $('signInForm').onsubmit=async e=>{
    e.preventDefault();
    if(!configured)return toast('Use Demo Preview or configure Supabase first.');
@@ -688,7 +803,7 @@ function bindEvents(){
  $('seasonSelect').onchange=async()=>{state.currentSeason=state.seasons.find(s=>s.id===$('seasonSelect').value);await loadCore();};$('weekSelect').onchange=async()=>{state.currentWeek=state.weeks.find(w=>w.id===$('weekSelect').value);$('commissionerWeekSelect').value=state.currentWeek.id;await loadWeek();};
  $('gamesGrid').onclick=e=>{const r=e.target.closest('input[data-game]');if(r)savePick(r.dataset.game,r.dataset.side);};
  $('addGlobalSpreadRule').onclick=()=>$('globalSpreadRules').insertAdjacentHTML('beforeend',spreadRuleRow());$('addWeekSpreadRule').onclick=()=>$('weekSpreadRules').insertAdjacentHTML('beforeend',spreadRuleRow());document.addEventListener('click',e=>{if(e.target.classList.contains('remove-rule'))e.target.closest('.spread-rule').remove();if(e.target.classList.contains('edit-game')){const g=state.games.find(x=>x.id===e.target.dataset.id);if(!g)return;$('gameEditId').value=g.id;$('awayTeam').value=g.away_team;$('homeTeam').value=g.home_team;$('kickoff').value=new Date(g.kickoff).toISOString().slice(0,16);$('network').value=g.network||'';$('awaySpread').value=g.away_spread??'';$('homeSpread').value=g.home_spread??'';$('gameDialog').showModal();}if(e.target.classList.contains('grade-game'))gradeGame(e.target.dataset.id);});
- $('weekOverrideEnabled').onchange=()=>$('weekOverrideFields').hidden=!$('weekOverrideEnabled').checked;$('commissionerWeekSelect').onchange=loadWeekOverride;$('copyDefaults').onclick=()=>{$('weekOverrideEnabled').checked=true;$('weekOverrideFields').hidden=false;$('weekMinPicks').value=$('globalMinPicks').value;$('weekMaxPicks').value=$('globalMaxPicks').value;$('weekSpreadRules').innerHTML=$('globalSpreadRules').innerHTML;};
+ $('weekOverrideEnabled').onchange=()=>$('weekOverrideFields').hidden=!$('weekOverrideEnabled').checked;$('commissionerWeekSelect').onchange=loadWeekOverride;$('copyDefaults').onclick=()=>{$('weekOverrideEnabled').checked=true;$('weekOverrideFields').hidden=false;$('weekMinPicks').value=$('globalMinPicks').value;$('weekMaxPicks').value=$('globalMinPicks').value;};
  $('saveSeasonSettings').onclick=saveSeasonSettings;$('saveWeekSettings').onclick=saveWeekSettings;$('saveMessage').onclick=saveSeasonSettings;$('importWeekButton').onclick=importWeek;$('addGameButton').onclick=()=>{$('gameForm').reset();$('gameEditId').value='';$('gameDialog').showModal();};$('gameForm').onsubmit=e=>{e.preventDefault();saveGame();$('gameDialog').close();};
  $('refreshPlayers').onclick=loadAdminPlayers;$('playerSearch').oninput=renderAdminPlayers;$('adminPlayersList').onclick=e=>{const b=e.target.closest('.manage-player');if(b)openAdminPlayer(b.dataset.user);};$('closeAdminPlayer').onclick=()=>$('adminPlayerDialog').close();$('saveAdminPlayer').onclick=saveAdminPlayer;$('grantReentry').onclick=grantReentry;$('adminEntriesList').onclick=e=>{const b=e.target.closest('.adjust-entry');if(b)adjustEntry(b.dataset.entry);};$('openPickAdmin').onclick=openAdminPicks;$('closeAdminPicks').onclick=()=>$('adminPicksDialog').close();$('adminPickWeek').onchange=loadAdminPickGames;$('adminPickGames').onclick=e=>{const b=e.target.closest('.save-admin-pick');if(b)saveAdminPick(b.dataset.game,b);};
 }

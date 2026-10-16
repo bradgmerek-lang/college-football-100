@@ -946,3 +946,18 @@ input,select,textarea{font-size:16px}
 .all-picks-fixed-head-table thead th{position:static!important;top:auto!important}
 .all-picks-fixed-head-table .all-picks-game-col,
 .all-picks-fixed-head-table .all-picks-score-col{position:static!important;left:auto!important}
+
+
+/* GRIDIRON LINES v1 */
+:root{--accent:#d7a63b;--accent2:#61d09b;--bg:#061410;--panel:#0a1c1a;--panel2:#102824;--line:#29463f}
+body{background:radial-gradient(circle at 20% 0,rgba(19,76,57,.55),transparent 35%),#061410}
+.logo-mark{background:linear-gradient(145deg,#e7bd5b,#a9781d);font-size:.78rem}
+.home-hero,.football-banner{background-image:linear-gradient(90deg,rgba(3,15,12,.92),rgba(3,15,12,.22)),url('gridiron-lines-hero.png')!important;background-size:cover!important;background-position:center 16%!important}
+.home-hero-copy{max-width:620px}
+.home-score-card{border-color:rgba(215,166,59,.45)}
+.game-foot span:first-child:after{content:' · frozen for all players';color:var(--accent)}
+.week-card-complete{border-color:#2d8d67!important;box-shadow:0 0 0 1px rgba(97,208,155,.18),var(--shadow)}
+.pick-count-warning{color:#ffd792;font-weight:800}
+@media(max-width:800px){.topbar nav{grid-template-columns:repeat(5,1fr)}.nav-btn[data-page="history"],.nav-btn[data-page="rules"]{display:none}}
+
+.result-push{color:#ffd36f!important}.all-picks-cell.result-push{background:rgba(215,166,59,.10)}

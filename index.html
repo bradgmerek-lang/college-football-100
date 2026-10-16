@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#08111f" />
-  <title>College Football 100</title>
+  <title>Gridiron Lines — College Football ATS Pick’em</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -107,10 +107,10 @@
   <div id="toast" class="toast" hidden></div>
   <section id="authView" class="auth-shell">
     <div class="brand-block">
-      <div class="eyebrow">SURVIVE • STACK WINS • FIRST TO 100</div>
-      <h1>College Football <span>100</span></h1>
-      <p>Pick any FBS games you want. Every correct pick moves your active run forward. One loss ends the run.</p>
-      <div class="feature-pills"><span>🔒 Hidden picks</span><span>⏱ Auto-lock</span><span>🏁 Road to 100</span></div>
+      <div class="eyebrow">COLLEGE FOOTBALL • AGAINST THE SPREAD • EVERY WEEK</div>
+      <h1>Gridiron <span>Lines</span></h1>
+      <p>Make your weekly college football picks against one universal frozen line. Build the best ATS record over the season.</p>
+      <div class="feature-pills"><span>🔒 Hidden picks</span><span>📏 Frozen weekly lines</span><span>🏆 Season standings</span></div>
     </div>
     <div class="auth-card">
       <div class="tabs"><button class="tab active" data-auth-tab="signin">Sign in</button><button class="tab" data-auth-tab="signup">Create account</button></div>
@@ -132,13 +132,13 @@
 
   <div id="appView" hidden>
     <header class="topbar">
-      <div><div class="logo-mark">100</div><strong>College Football 100</strong></div>
+      <div><div class="logo-mark">GL</div><strong>Gridiron Lines</strong></div>
       <nav>
         <button data-page="home" class="nav-btn active">Home</button>
-        <button data-page="picks" class="nav-btn">Picks</button>
+        <button data-page="picks" class="nav-btn">My Card</button>
         <button data-page="allpicks" class="nav-btn">All Picks</button>
         <button data-page="standings" class="nav-btn">Standings</button>
-        <button data-page="history" class="nav-btn">My Runs</button>
+        <button data-page="history" class="nav-btn">Results</button>
         <button data-page="rules" class="nav-btn">Rules</button>
         <button id="commissionerNav" data-page="commissioner" class="nav-btn" hidden>Commissioner</button>
       </nav>
@@ -150,16 +150,16 @@
       <section id="homePage" class="page">
         <div class="home-hero">
           <div class="home-hero-copy">
-            <div class="eyebrow">COLLEGE FOOTBALL 100</div>
+            <div class="eyebrow">GRIDIRON LINES · COLLEGE FOOTBALL ATS PICK’EM</div>
             <h2 id="homeGreeting">Welcome back</h2>
-            <p>Every correct pick moves you closer. One loss ends the run.</p>
+            <p>Pick against the spread each week. Build the best record and top the standings.</p>
             <button id="homeMakePicks" class="primary home-cta">Make This Week's Picks</button>
           </div>
         </div>
         <div class="home-score-card home-score-strip card">
-          <span id="currentRoadLabel">ROAD TO 100 #1</span>
+          <span id="currentRoadLabel">SEASON POINTS</span>
           <strong id="homeWins">0</strong>
-          <small>wins on current run</small>
+          <small>points this season</small>
           <div class="progress-track"><div id="homeRunBar" class="progress-fill" style="width:0%"></div></div>
         </div>
         <div id="championBanner" class="champion-banner card" hidden></div>
@@ -167,7 +167,7 @@
         <div class="home-grid">
           <div class="card home-panel"><div class="panel-kicker">THIS WEEK</div><h3 id="homeWeekTitle">Week</h3><div id="homeWeekSummary" class="home-stat-grid"></div><button id="homeViewPicks" class="secondary full">View My Picks</button></div>
           <div class="card home-panel"><div class="panel-kicker">NEXT UP</div><h3>Upcoming selections</h3><div id="homeUpcoming" class="home-upcoming"></div></div>
-          <div class="card home-panel"><div class="panel-kicker">STANDINGS</div><h3>Road to 100 leaders</h3><div id="homeLeaders" class="home-leaders"></div><button id="homeViewStandings" class="secondary full">View Full Standings</button></div>
+          <div class="card home-panel"><div class="panel-kicker">STANDINGS</div><h3>Season leaders</h3><div id="homeLeaders" class="home-leaders"></div><button id="homeViewStandings" class="secondary full">View Full Standings</button></div>
           <div id="homeCommissionerPanel" class="card home-panel" hidden><div class="panel-kicker">COMMISSIONER</div><h3>Pool status</h3><div id="homeCommissionerStats" class="home-stat-grid"></div><button id="homeCommissionerButton" class="secondary full">Open Commissioner Dashboard</button></div>
         </div>
       </section>
@@ -178,14 +178,14 @@
         </div>
         <div class="hero-row">
           <div>
-            <div class="eyebrow">ACTIVE RUN</div>
-            <h2 id="welcomeTitle">Road to 100</h2>
+            <div class="eyebrow">MY WEEKLY CARD</div>
+            <h2 id="welcomeTitle">My Card</h2>
             <p id="weekSubtitle" class="muted">Choose a week to begin.</p>
           </div>
           <div class="progress-card">
-            <div class="progress-meta"><strong id="runWins">0</strong><span>/ 100 wins</span></div>
+            <div class="progress-meta"><strong id="runWins">0</strong><span id="pickGoalText">/ 10 picks</span></div>
             <div class="progress-track"><div id="runBar" class="progress-fill" style="width:0%"></div></div>
-            <small id="runStatus">ACTIVE</small>
+            <small id="runStatus">CARD OPEN</small>
           </div>
         </div>
 
@@ -195,7 +195,7 @@
           <label>Filter<select id="gameFilter"><option value="all">All games</option><option value="open">Open only</option><option value="picked">My picks</option></select></label>
         </div>
 
-        <div id="reentryCard" class="reentry-card card" hidden>
+        <div id="reentryCard" class="reentry-card card" hidden style="display:none!important">
           <div>
             <div class="panel-kicker">RUN ENDED</div>
             <h3>Ready to start a new run?</h3>
@@ -224,39 +224,28 @@
       </section>
 
       <section id="standingsPage" class="page" hidden>
-        <div class="section-head"><div><div id="standingsRoadLabel" class="eyebrow">ROAD TO 100 LEADERBOARD</div><h2>Road to 100 Standings</h2></div><span class="privacy-chip">Picks reveal at kickoff</span></div>
-        <div class="card table-wrap"><table><thead><tr><th>Rank</th><th>Player</th><th>Current run</th><th>Best run</th><th>Entries</th><th>Status</th><th>Progress</th></tr></thead><tbody id="standingsBody"></tbody></table></div>
-        <div class="card champion-history-card"><div class="panel-kicker">CHAMPIONSHIP HISTORY</div><div id="championHistory" class="champion-history"></div></div>
+        <div class="section-head"><div><div id="standingsRoadLabel" class="eyebrow">SEASON LEADERBOARD</div><h2>Gridiron Lines Standings</h2></div><span class="privacy-chip">Picks reveal at kickoff</span></div>
+        <div class="card table-wrap"><table><thead><tr><th>Rank</th><th>Player</th><th>Points</th><th>W</th><th>L</th><th>P</th><th>ATS %</th></tr></thead><tbody id="standingsBody"></tbody></table></div>
+        <div class="card champion-history-card"><div class="panel-kicker">SCORING</div><div id="championHistory" class="champion-history"><div class="home-empty">Correct picks earn 1 point. Push value is set by the commissioner.</div></div></div>
       </section>
 
       <section id="historyPage" class="page" hidden>
-        <div class="section-head"><div><div class="eyebrow">ENTRY HISTORY</div><h2>My Runs</h2></div></div>
+        <div class="section-head"><div><div class="eyebrow">WEEKLY PERFORMANCE</div><h2>My Results</h2></div></div>
         <div id="historyList" class="stack"></div>
       </section>
 
       <section id="rulesPage" class="page" hidden>
-        <div class="section-head rules-head">
-          <div><div class="eyebrow">HOW THE POOL WORKS</div><h2>College Football 100 Rules</h2><p class="muted">First to 100 correct picks on one active run wins. One wrong pick ends the run.</p></div>
-          <span class="privacy-chip">Official pool rules</span>
-        </div>
-
+        <div class="section-head rules-head"><div><div class="eyebrow">HOW THE POOL WORKS</div><h2>Gridiron Lines Rules</h2><p class="muted">A season-long college football pick’em scored against the spread.</p></div><span class="privacy-chip">Official pool rules</span></div>
         <div id="rulesCurrentWeek" class="card rules-current"></div>
-
         <div class="rules-grid">
-          <article class="card rule-card"><div class="rule-number">1</div><div><h3>Road to 100</h3><p>Your goal is to reach <strong>100 correct picks on a single active run</strong>. Correct picks add one win to that run. A new entry starts at zero.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">2</div><div><h3>Choose your games</h3><p>You may pick any loaded FBS games, subject to the commissioner’s minimum, maximum, and spread requirements for that week. You do not have to pick every game.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">3</div><div><h3>Picks stay completely private</h3><p>Before a game kicks off, other players cannot see your selection — or even tell that you made a selection in that game. No hidden-pick marker or future-pick total is exposed.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">4</div><div><h3>Each game locks at kickoff</h3><p>You may add, change, or remove your pick until that game’s scheduled kickoff. At kickoff, the selection locks automatically and can no longer be changed by the player.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">5</div><div><h3>Picks reveal after kickoff</h3><p>Once an individual game kicks off, that selection may appear in the player’s revealed picks. Games that have not started remain completely invisible to everyone else.</p></div></article>
-          <article class="card rule-card danger-rule"><div class="rule-number">6</div><div><h3>One loss ends the run</h3><p>An incorrect pick ends the active run immediately for scoring purposes. Picks from games that settled before the loss remain part of the completed run. Unsettled picks are preserved so they can carry into a new run if the player re-enters.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">7</div><div><h3>Same-time kickoffs are graded together</h3><p>If multiple selected games have the exact same kickoff time, they are treated as the same scoring group. A loss in that group does not erase the results of the other games in that same group.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">8</div><div><h3>Immediate re-entry</h3><p>If re-entry is allowed, an eliminated player may start a new run immediately without commissioner approval. The new run starts at zero, and unsettled picks from the current week carry forward automatically, subject to the season’s re-entry limits.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">9</div><div><h3>Opening spreads & weekly spread requirements</h3><p>The site uses the opening spread captured for each game. A rule such as <strong>“at least 1 pick with a maximum favorite spread of 9.5”</strong> means at least one selected team must have a line of <strong>-9.5 or better</strong>. For example, -9.5, -7, +3, or +14 qualify; -10 or -14 do not.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">10</div><div><h3>Commissioner administration</h3><p>The commissioner may correct imported or historical picks, player records, and grading when necessary. Administrative overrides are separate from normal player access and are recorded by the site’s audit tools.</p></div></article>
-          <article class="card rule-card"><div class="rule-number">11</div><div><h3>New Road to 100 after a champion</h3><p>When a player reaches 100 and is declared champion, that Road to 100 closes immediately and the next one begins automatically. Every participant starts the new contest at zero on Entry #1. Picks already made for games that are not final or canceled carry into the new contest automatically; completed games stay with the finished contest.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">1</div><div><h3>Weekly card</h3><p>Each player makes the commissioner-set number of ATS picks each week. The season default is <strong>10 picks</strong>, with optional week-by-week overrides.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">2</div><div><h3>One line for everyone</h3><p>Each game has one official pool spread. Once captured, that line is frozen for the week so no competitors can receive different numbers on the same game.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">3</div><div><h3>ATS scoring</h3><p>A correct against-the-spread pick earns <strong>1 point</strong>. A loss earns 0. A push defaults to <strong>0.5 points</strong>; the commissioner may change the push value.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">4</div><div><h3>Individual game locks</h3><p>You may add, change, or remove a selection until that game’s scheduled kickoff. At kickoff, that selection locks.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">5</div><div><h3>Picks stay private</h3><p>Other competitors cannot see a selection before its game kicks off. Once the game begins, the pick is revealed on All Picks.</p></div></article>
+          <article class="card rule-card"><div class="rule-number">6</div><div><h3>Season standings</h3><p>Points accumulate all season. Standings show total points, ATS wins, losses, pushes, and winning percentage.</p></div></article>
         </div>
-
-        <div class="card rules-note"><strong>Weekly settings can change.</strong><span>The “Current Week” panel above reflects the active week’s requirements. When a week has a commissioner override, those settings take precedence over the season defaults.</span></div>
+        <div class="card rules-note"><strong>Weekly pick counts can change.</strong><span>The commissioner sets a season default and may override the required selection count for an individual week.</span></div>
       </section>
 
       <section id="commissionerPage" class="page" hidden>
@@ -264,14 +253,9 @@
         <div class="commissioner-grid">
           <div class="card panel">
             <h3>Season defaults</h3>
-            <label>Minimum picks per week<input id="globalMinPicks" type="number" min="0" value="1"></label>
-            <label>Maximum picks per week <small>(0 = unlimited)</small><input id="globalMaxPicks" type="number" min="0" value="0"></label>
-            <label>Re-entry policy<select id="globalReentry"><option value="unlimited">Unlimited</option><option value="limited">Limited</option><option value="disabled">No re-entry</option></select></label>
-            <label>Maximum entries <small>(used only when limited)</small><input id="globalMaxEntries" type="number" min="1" value="3"></label>
+            <label>Default picks per week<input id="globalMinPicks" type="number" min="1" value="10"></label><input id="globalMaxPicks" type="hidden" value="10"><label>Push value<input id="pushPoints" type="number" min="0" max="1" step="0.5" value="0.5"></label><select id="globalReentry" hidden><option value="disabled" selected>No re-entry</option></select><input id="globalMaxEntries" type="hidden" value="1">
             <div class="switch-row"><span>Registration open</span><input id="registrationOpen" type="checkbox" checked></div>
-            <h4>Spread requirements</h4>
-            <div id="globalSpreadRules"></div>
-            <button id="addGlobalSpreadRule" class="secondary full">+ Add spread requirement</button>
+            <div id="globalSpreadRules" hidden></div><button id="addGlobalSpreadRule" hidden type="button"></button>
             <button id="saveSeasonSettings" class="primary full">Save season defaults</button>
           </div>
 
@@ -280,10 +264,7 @@
             <label>Week<select id="commissionerWeekSelect"></select></label>
             <div class="switch-row"><span>Customize this week</span><input id="weekOverrideEnabled" type="checkbox"></div>
             <div id="weekOverrideFields" class="stack-sm" hidden>
-              <label>Minimum picks<input id="weekMinPicks" type="number" min="0"></label>
-              <label>Maximum picks <small>(0 = unlimited)</small><input id="weekMaxPicks" type="number" min="0"></label>
-              <h4>Spread requirements</h4><div id="weekSpreadRules"></div>
-              <button id="addWeekSpreadRule" class="secondary full">+ Add spread requirement</button>
+              <label>Required picks this week<input id="weekMinPicks" type="number" min="1"></label><input id="weekMaxPicks" type="hidden"><div id="weekSpreadRules" hidden></div><button id="addWeekSpreadRule" hidden type="button"></button>
             </div>
             <button id="copyDefaults" class="secondary full">Copy season defaults</button>
             <button id="saveWeekSettings" class="primary full">Save week settings</button>
@@ -292,7 +273,7 @@
           <div class="card panel">
             <h3>Games & results</h3>
             <div class="button-row"><button id="importWeekButton" class="primary">Import selected week</button><button id="addGameButton" class="secondary">Add game manually</button></div>
-            <p class="micro">The importer uses the server-side CFBD key. Manual entry remains available at all times.</p>
+            <p class="micro">The first captured spread becomes the official pool line and stays frozen for every competitor. Manual score entry remains available.</p>
             <div id="adminGamesList" class="admin-games"></div>
           </div>
 
@@ -304,7 +285,7 @@
           </div>
 
           <div class="card panel player-admin-panel">
-            <div class="panel-title-row"><div><h3>Player administration</h3><p class="micro">Manage accounts, entries, and historical picks without leaving the site.</p></div><button id="refreshPlayers" class="secondary compact">Refresh</button></div>
+            <div class="panel-title-row"><div><h3>Player administration</h3><p class="micro">Manage players and correct historical picks without leaving the site.</p></div><button id="refreshPlayers" class="secondary compact">Refresh</button></div>
             <label>Find player<input id="playerSearch" type="search" placeholder="Search display name..."></label>
             <div id="adminPlayersList" class="admin-players"></div>
           </div>

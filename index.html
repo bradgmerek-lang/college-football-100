@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=1.6" />
+  <link rel="stylesheet" href="styles.css?v=1.6.3" />
   <style>
     /* v9: forced visual polish; inline so browser CSS caching cannot hide the change */
     .home-score-strip{
@@ -101,11 +101,23 @@
         white-space:nowrap !important;
       }
     }
-        /* Home banner: show the complete artwork without cropping */
-    .gridiron-brand-hero{
-      background-size:contain !important;
+
+    /* v1.6.2: Home hero uses the artwork's real aspect ratio; no forced tall crop. */
+    #homePage .gridiron-brand-hero{
+      min-height:0 !important;
+      height:auto !important;
+      aspect-ratio:1738 / 247 !important;
+      background-size:100% 100% !important;
       background-position:center center !important;
       background-repeat:no-repeat !important;
+    }
+    @media (max-width:800px){
+      #homePage .gridiron-brand-hero{
+        min-height:0 !important;
+        height:auto !important;
+        aspect-ratio:1738 / 247 !important;
+        background-size:100% 100% !important;
+      }
     }
   </style>
 </head>
@@ -154,7 +166,7 @@
 
     <main class="container">
       <section id="homePage" class="page">
-        <div class="home-hero gridiron-brand-hero" aria-label="Gridiron Lines · College Football ATS Pick’em"></div>
+        <div class="home-hero gridiron-brand-hero" aria-label="Gridiron Lines · College Football ATS Pick’em" style="background-image:none!important;min-height:0!important;height:auto!important;aspect-ratio:auto!important;padding:0!important;overflow:hidden!important"><img src="gridiron-lines-clean-hero.jpg?v=1.6.3" alt="Gridiron Lines · College Football ATS Pick’em" style="display:block;width:100%;height:auto;object-fit:contain"></div>
         <div class="live-dashboard" id="liveDashboard">
           <div class="live-tile live-card-tile">
             <div class="live-tile-title">▣ MY CARD</div>
@@ -356,6 +368,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=1.6"></script>
+  <script src="app.js?v=1.6.3"></script>
 </body>
 </html>

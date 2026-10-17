@@ -163,7 +163,7 @@ async function renderHome(){
   const latest=latestSeasonEntry();
   const road=currentRoadNumber();
   const canReenter=!!state.activeContest&&!state.activeEntry&&latest?.status==='lost';
-  $('homeGreeting').textContent=`Welcome back, ${state.profile?.display_name||'Player'}`;
+  if($('homeGreeting'))$('homeGreeting').textContent=`Welcome back, ${state.profile?.display_name||'Player'}`;
   $('homeWins').textContent=wins;
   $('homeRunBar').style.width=`${Math.min(100,wins)}%`;
   const roadLabel=$('currentRoadLabel');if(roadLabel)roadLabel.textContent=`ROAD TO 100 #${road}`;
@@ -723,7 +723,7 @@ async function renderHome(){
   renderContestChrome();
   const obsoleteChampion=$('championBanner'); if(obsoleteChampion){obsoleteChampion.hidden=true;obsoleteChampion.innerHTML='';}
   const score=await seasonScore(),goal=requiredPickCount(),picked=state.picks.length,open=state.games.filter(g=>!locked(g)).length;
-  $('homeGreeting').textContent=`Welcome back, ${state.profile?.display_name||'Player'}`;
+  if($('homeGreeting'))$('homeGreeting').textContent=`Welcome back, ${state.profile?.display_name||'Player'}`;
   $('homeWins').textContent=Number(score.points||0).toFixed(Number(score.points||0)%1?1:0);
   $('homeRunBar').style.width=`${goal?Math.min(100,picked/goal*100):0}%`;
   $('homeWeekTitle').textContent=state.currentWeek?`Week ${state.currentWeek.week_number}`:'Current week';

@@ -144,16 +144,16 @@ function renderTop(){
   $('runBar').style.width=`${Math.min(100,wins)}%`;
   if(e){
     $('runStatus').textContent='ACTIVE';
-    $('welcomeTitle').textContent=`${state.profile?.display_name||'Player'} · Road to 100 #${road} · Entry #${e.entry_number}`;
+    $('welcomeTitle').textContent=`${state.profile?.display_name||'Player'} · Gridiron Lines · Entry #${e.entry_number}`;
   }else if(latest?.status==='lost'){
     $('runStatus').textContent='RUN ENDED';
-    $('welcomeTitle').textContent=`${state.profile?.display_name||'Player'} · Road to 100 #${road} · Entry #${latest.entry_number} ended`;
+    $('welcomeTitle').textContent=`${state.profile?.display_name||'Player'} · Gridiron Lines · Entry #${latest.entry_number}`;
   }else{
     $('runStatus').textContent=state.activeContest?'NO ACTIVE RUN':'CONTEST COMPLETE';
-    $('welcomeTitle').textContent=`${state.profile?.display_name||'Player'} · Road to 100 #${road}`;
+    $('welcomeTitle').textContent=`${state.profile?.display_name||'Player'} · Gridiron Lines`;
   }
   const canReenter=!!state.activeContest&&!e&&latest?.status==='lost';
-  $('weekSubtitle').textContent=canReenter?'Run ended · re-entry available now':(state.currentWeek?`Road to 100 #${road} · Week ${state.currentWeek.week_number} · ${state.games.length} FBS games loaded`:'No active week');
+  $('weekSubtitle').textContent=canReenter?'Weekly ATS card':(state.currentWeek?`Gridiron Lines · Week ${state.currentWeek.week_number} · ${state.games.length} FBS games loaded`:'No active week');
   const rc=$('reentryCard');if(rc)rc.hidden=!canReenter;
   const roadLabel=$('currentRoadLabel');if(roadLabel)roadLabel.textContent=`ROAD TO 100 #${road}`;
 }
@@ -174,7 +174,7 @@ async function renderHome(){
     if(completed?.champion_user_id){
       const championName=state.championNames[completed.champion_user_id]||'Champion';
       championBox.hidden=false;
-      championBox.innerHTML=`<div class="champion-trophy">🏆</div><div><span>${state.currentSeason?.year||''} ROAD TO 100 CHAMPION #${Number(completed.contest_number||1)}</span><strong>${escapeHtml(championName)}</strong><small>Road to 100 #${road} is now underway.</small></div>`;
+      championBox.innerHTML=`<div class="champion-trophy">🏆</div><div><span>${state.currentSeason?.year||''} ROAD TO 100 CHAMPION #${Number(completed.contest_number||1)}</span><strong>${escapeHtml(championName)}</strong><small>Gridiron Lines is now underway.</small></div>`;
     }else championBox.hidden=true;
   }
 
@@ -562,7 +562,7 @@ function renderHistory(){
   $('historyList').innerHTML=entries.map(e=>{
     const contest=contestForEntry(e),road=Number(contest?.contest_number||1);
     const isCurrent=state.activeContest?.id===e.contest_id&&e.status==='active';
-    return `<div class="run-card card"><div class="run-number">#${e.entry_number}</div><div><strong>Road to 100 #${road} · ${isCurrent?'Current run':'Completed run'}</strong><div class="muted">Started ${new Date(e.created_at).toLocaleDateString()}${e.loss_week_number?` · Lost Week ${e.loss_week_number}`:''}</div></div><div><strong>${e.status==='active'?e.current_wins:e.best_wins} wins</strong><div class="status-${e.status}">${e.status.toUpperCase()}</div></div></div>`;
+    return `<div class="run-card card"><div class="run-number">#${e.entry_number}</div><div><strong>Gridiron Lines · ${isCurrent?'Current run':'Completed run'}</strong><div class="muted">Started ${new Date(e.created_at).toLocaleDateString()}${e.loss_week_number?` · Lost Week ${e.loss_week_number}`:''}</div></div><div><strong>${e.status==='active'?e.current_wins:e.best_wins} wins</strong><div class="status-${e.status}">${e.status.toUpperCase()}</div></div></div>`;
   }).join('')||'<div class="empty card">No entries yet.</div>';
 }
 function spreadRuleRow(r={max_spread:-9.5,required_count:1}){return `<div class="spread-rule"><label>Max favorite spread<input class="rule-spread" type="number" step="0.5" value="${r.max_spread}"></label><label>Required picks<input class="rule-count" type="number" min="1" value="${r.required_count}"></label><button class="secondary remove-rule" type="button">✕</button></div>`;}
@@ -656,19 +656,7 @@ async function playerReenter(){
   }finally{buttons.forEach(b=>b.disabled=false);}
 }
 
-async function checkForContestRollover(){
-  if(state.demo||!state.user||!state.currentSeason||!sb)return;
-  try{
-    const {data,error}=await sb.from('contests').select('id,contest_number,status').eq('season_id',state.currentSeason.id).eq('status','active').maybeSingle();
-    if(error||!data)return;
-    if(state.activeContest?.id!==data.id){
-      await loadCore();
-      toast(`Road to 100 #${data.contest_number} has begun.`);
-    }
-  }catch(err){console.warn('Contest refresh failed:',err);}
-}
-setInterval(checkForContestRollover,60000);
-
+async function checkForContestRollover(){ return; }
 
 /* ===== GRIDIRON LINES v1 OVERRIDES ===== */
 function renderContestChrome(){
@@ -699,6 +687,7 @@ function renderTop(){
 async function renderHome(){
   if(!$('homePage'))return;
   renderContestChrome();
+  const obsoleteChampion=$('championBanner'); if(obsoleteChampion){obsoleteChampion.hidden=true;obsoleteChampion.innerHTML='';}
   const score=await seasonScore(),goal=requiredPickCount(),picked=state.picks.length,open=state.games.filter(g=>!locked(g)).length;
   $('homeGreeting').textContent=`Welcome back, ${state.profile?.display_name||'Player'}`;
   $('homeWins').textContent=Number(score.points||0).toFixed(Number(score.points||0)%1?1:0);

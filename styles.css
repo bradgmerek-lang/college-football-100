@@ -961,3 +961,29 @@ body{background:radial-gradient(circle at 20% 0,rgba(19,76,57,.55),transparent 3
 @media(max-width:800px){.topbar nav{grid-template-columns:repeat(5,1fr)}.nav-btn[data-page="history"],.nav-btn[data-page="rules"]{display:none}}
 
 .result-push{color:#ffd36f!important}.all-picks-cell.result-push{background:rgba(215,166,59,.10)}
+
+
+/* GRIDIRON LINES v1.3 — final Road-to-100 visual cleanup */
+#championBanner{display:none!important}
+#homePage .home-hero{
+  background-image:linear-gradient(90deg,rgba(3,15,12,.20),rgba(3,15,12,.04)),url('gridiron-lines-hero.png?v=1.3')!important;
+  background-size:cover!important;
+  background-position:center top!important;
+  min-height:390px;
+  align-items:flex-end;
+}
+#homePage .home-hero-copy{
+  background:linear-gradient(90deg,rgba(3,15,12,.94),rgba(3,15,12,.72));
+  border:1px solid rgba(215,166,59,.30);
+  border-radius:16px;
+  padding:20px 22px;
+  max-width:650px;
+}
+#picksPage .football-banner{
+  background-image:url('gridiron-lines-hero.png?v=1.3')!important;
+  background-position:center 8%!important;
+}
+@media(max-width:800px){
+ #homePage .home-hero{min-height:300px;background-position:center top!important}
+ #homePage .home-hero-copy{padding:16px}
+}

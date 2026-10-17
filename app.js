@@ -193,6 +193,9 @@ async function renderHome(){
   else if(!state.activeContest){cta.textContent='Contest Complete';cta.disabled=true;}
   else{cta.textContent="Make This Week's Picks";cta.disabled=false;}
   await loadHomeLeaders();
+  paintLiveDashboard(score,goal,picked);
+  await loadLivePreviousWeek();
+  ensureGridironLiveTimer();
   $('homeCommissionerPanel').hidden=state.profile?.role!=='commissioner';
   if(state.profile?.role==='commissioner')$('homeCommissionerStats').innerHTML=`<div><strong>${state.games.length}</strong><span>games loaded</span></div><div><strong>${open}</strong><span>still open</span></div><div><strong>${state.standings.length}</strong><span>players</span></div>`;
 }
@@ -639,7 +642,7 @@ async function saveAdminPick(gameId,button){
  } finally {button.disabled=false;}
 }
 
-function startDemo(){state.demo=true;state.user={id:'demo',email:'demo@example.com'};state.profile={id:'demo',display_name:'Brad',role:'commissioner'};state.seasons=[{id:'ds1',year:new Date().getFullYear(),is_active:true}];state.currentSeason=state.seasons[0];state.contests=[{id:'dc1',season_id:'ds1',contest_number:1,status:'active'}];state.activeContest=state.currentContest=state.contests[0];state.weeks=[{id:'dw1',season_id:'ds1',week_number:1,is_current:true}];state.currentWeek=state.weeks[0];state.games=structuredClone(demoGames);state.entries=[{id:'de1',season_id:'ds1',contest_id:'dc1',user_id:'demo',entry_number:1,status:'active',current_wins:12,best_wins:12,created_at:new Date().toISOString()}];state.activeEntry=state.entries[0];state.picks=[];state.rules={min_picks:10,max_picks:10,spread_requirements:[]};state.seasonSettings={min_picks:10,max_picks:10,push_points:.5};showApp();fillSelectors();renderTop();renderGames();renderRequirements();renderHome();}
+function startDemo(){state.demo=true;state.user={id:'demo',email:'demo@example.com'};state.profile={id:'demo',display_name:'Brad',role:'commissioner'};state.seasons=[{id:'ds1',year:new Date().getFullYear(),is_active:true}];state.currentSeason=state.seasons[0];state.contests=[{id:'dc1',season_id:'ds1',contest_number:1,status:'active'}];state.activeContest=state.currentContest=state.contests[0];state.weeks=[{id:'dw1',season_id:'ds1',week_number:1,is_current:true}];state.currentWeek=state.weeks[0];state.games=structuredClone(demoGames);state.entries=[{id:'de1',season_id:'ds1',contest_id:'dc1',user_id:'demo',entry_number:1,status:'active',current_wins:12,best_wins:12,created_at:new Date().toISOString()}];state.activeEntry=state.entries[0];state.picks=[];state.rules={min_picks:10,max_picks:10,spread_requirements:[]};state.seasonSettings={min_picks:10,max_picks:10,push_points:0};showApp();fillSelectors();renderTop();renderGames();renderRequirements();renderHome();}
 async function playerReenter(){
   const latest=latestSeasonEntry();
   if(state.activeEntry)return switchPage('picks');
@@ -684,6 +687,37 @@ function renderTop(){
   $('weekSubtitle').textContent=`${n} of ${goal} picks made · each selection locks at kickoff`;
   const rc=$('reentryCard');if(rc)rc.hidden=true;
 }
+let gridironLiveTimer=null;
+function updateGridironCountdown(){
+  const box=$('liveCountdown');if(!box)return;
+  const now=Date.now();
+  const pickedOpen=state.picks.map(p=>state.games.find(g=>g.id===p.game_id)).filter(g=>g&&!locked(g));
+  const pool=(pickedOpen.length?pickedOpen:state.games.filter(g=>!locked(g))).sort((a,b)=>new Date(a.kickoff)-new Date(b.kickoff));
+  const next=pool[0];
+  if(!next){box.innerHTML='<div><strong>—</strong><span>DAYS</span></div><div><strong>—</strong><span>HOURS</span></div><div><strong>—</strong><span>MIN</span></div><div><strong>—</strong><span>SEC</span></div>';if($('liveCountdownNote'))$('liveCountdownNote').textContent='No open games remain this week';return;}
+  let s=Math.max(0,Math.floor((new Date(next.kickoff).getTime()-now)/1000));const d=Math.floor(s/86400);s%=86400;const h=Math.floor(s/3600);s%=3600;const m=Math.floor(s/60),sec=s%60;
+  box.innerHTML=`<div><strong>${d}</strong><span>DAYS</span></div><div><strong>${String(h).padStart(2,'0')}</strong><span>HOURS</span></div><div><strong>${String(m).padStart(2,'0')}</strong><span>MIN</span></div><div><strong>${String(sec).padStart(2,'0')}</strong><span>SEC</span></div>`;
+  const team=pickedOpen.length?'your next selected game':'the next available game';if($('liveCountdownNote'))$('liveCountdownNote').textContent=`${team} locks at kickoff`;
+}
+async function loadLivePreviousWeek(){
+  const label=$('livePrevWeekLabel');if(!label)return;
+  const prevNo=Number(state.currentWeek?.week_number||0)-1;label.textContent=prevNo>0?`WEEK ${prevNo}`:'PREVIOUS WEEK';
+  if(state.demo)return;
+  const {data}=await sb.rpc('get_gridiron_week_results',{p_season_id:state.currentSeason.id,p_user_id:state.user.id});
+  const r=(data||[]).find(x=>Number(x.week_number)===prevNo&&Number(x.picks)>0);
+  $('livePrevWins').textContent=r?.wins??'—';$('livePrevLosses').textContent=r?.losses??'—';$('livePrevPushes').textContent=r?.pushes??'—';$('livePrevPoints').textContent=r?Number(r.points||0).toFixed(Number(r.points||0)%1?1:0):'0';
+}
+function paintLiveDashboard(score,goal,picked){
+  if(!$('livePickCount'))return;
+  $('livePickCount').textContent=`${picked} of ${goal}`;$('liveWeekLabel').textContent=`WEEK ${state.currentWeek?.week_number||''}`;
+  $('liveSeasonWins').textContent=score.wins||0;$('liveSeasonLosses').textContent=score.losses||0;$('liveSeasonPushes').textContent=score.pushes||0;
+  const rank=(state.standings||[]).findIndex(x=>x.user_id===state.user?.id);$('liveSeasonRank').textContent=rank>=0?`Rank: ${rank+1} of ${state.standings.length}`:'Rank: —';
+  const push=Number(state.seasonSettings?.push_points??0);$('liveHowPick').textContent=`Choose exactly ${goal} game${goal===1?'':'s'} against the spread`;$('liveHowScore').textContent=`1 point for a win · ${push} for a push`;
+  $('liveStandings').innerHTML=(state.standings||[]).slice(0,3).map((x,i)=>`<div class="live-standing-row"><span>${i+1}</span><strong>${escapeHtml(x.display_name)}</strong><b>${Number(x.points||0).toFixed(Number(x.points||0)%1?1:0)} pts</b></div>`).join('')||'<div class="home-empty">Standings will appear here.</div>';
+  updateGridironCountdown();
+}
+function ensureGridironLiveTimer(){if(gridironLiveTimer)return;gridironLiveTimer=setInterval(()=>{updateGridironCountdown();},1000);}
+
 async function renderHome(){
   if(!$('homePage'))return;
   renderContestChrome();
@@ -709,14 +743,14 @@ async function loadHomeLeaders(){
 }
 function renderRequirements(){
   const goal=requiredPickCount(),n=state.picks.length;
-  $('requirementsCard').innerHTML=`<h3>Week ${state.currentWeek?.week_number||''} card</h3><div class="req-list"><span class="req ${n===goal?'met':'unmet'}">${n}/${goal} picks</span><span class="req met">One frozen line per game</span><span class="req met">Push = ${Number(state.seasonSettings?.push_points??0.5)} pts</span></div><p class="micro">Make exactly ${goal} selections. Picks lock individually at kickoff; the displayed spread is the same official pool line for every competitor.</p>`;
+  $('requirementsCard').innerHTML=`<h3>Week ${state.currentWeek?.week_number||''} card</h3><div class="req-list"><span class="req ${n===goal?'met':'unmet'}">${n}/${goal} picks</span><span class="req met">One frozen line per game</span><span class="req met">Push = ${Number(state.seasonSettings?.push_points??0)} pts</span></div><p class="micro">Make exactly ${goal} selections. Picks lock individually at kickoff; the displayed spread is the same official pool line for every competitor.</p>`;
 }
 async function renderStandings(){
   if(state.demo)state.standings=[{user_id:'demo',display_name:'Brad',points:62.5,wins:62,losses:37,pushes:1,ats_pct:62.5},{user_id:'d2',display_name:'Jordan',points:60,wins:60,losses:40,pushes:0,ats_pct:60}];
   else{const {data,error}=await sb.rpc('get_gridiron_standings',{p_season_id:state.currentSeason.id});if(error)return toast(error.message);state.standings=data||[];}
   const label=$('standingsRoadLabel');if(label)label.textContent='SEASON LEADERBOARD';
   $('standingsBody').innerHTML=state.standings.map((s,i)=>`<tr><td><strong>${i+1}</strong></td><td><button class="player-picks-link" data-user="${s.user_id}" data-name="${escapeHtml(s.display_name)}">${escapeHtml(s.display_name)}</button></td><td><strong>${Number(s.points||0).toFixed(Number(s.points||0)%1?1:0)}</strong></td><td>${s.wins||0}</td><td>${s.losses||0}</td><td>${s.pushes||0}</td><td>${Number(s.ats_pct||0).toFixed(1)}%</td></tr>`).join('');
-  const history=$('championHistory');if(history)history.innerHTML=`<div class="champion-history-row"><span>Push value</span><strong>${Number(state.seasonSettings?.push_points??0.5)} point${Number(state.seasonSettings?.push_points??0.5)===1?'':'s'}</strong></div>`;
+  const history=$('championHistory');if(history)history.innerHTML=`<div class="champion-history-row"><span>Push value</span><strong>${Number(state.seasonSettings?.push_points??0)} point${Number(state.seasonSettings?.push_points??0)===1?'':'s'}</strong></div>`;
 }
 async function renderHistory(){
   if(state.demo){$('historyList').innerHTML='<div class="run-card card"><div class="run-number">7</div><div><strong>Week 7</strong><div class="muted">10 picks</div></div><div><strong>7.5 points</strong><div class="status-active">7-2-1 ATS</div></div></div>';return;}
@@ -732,7 +766,7 @@ async function fetchRevealedPicks(userId){
 }
 async function saveSeasonSettings(){
   if(state.demo)return toast('Settings saved in demo preview.');
-  const count=Math.max(1,Number($('globalMinPicks').value||10)),push=Math.max(0,Math.min(1,Number($('pushPoints').value||0.5)));
+  const count=Math.max(1,Number($('globalMinPicks').value||10)),push=Math.max(0,Math.min(1,Number($('pushPoints').value||0)));
   $('globalMaxPicks').value=count;
   const payload={season_id:state.currentSeason.id,min_picks:count,max_picks:count,reentry_policy:'disabled',max_entries:1,registration_open:$('registrationOpen').checked,commissioner_message:$('commissionerMessage').value,spread_requirements:[],push_points:push};
   const {error}=await sb.from('season_settings').upsert(payload,{onConflict:'season_id'});toast(error?error.message:'Gridiron Lines season settings saved.');if(!error){state.seasonSettings={...(state.seasonSettings||{}),...payload};await loadWeek();}
@@ -746,9 +780,9 @@ async function saveWeekSettings(){
 }
 async function renderCommissioner(){
   if(state.profile?.role!=='commissioner')return;
-  if(state.demo){$('globalMinPicks').value=10;$('globalMaxPicks').value=10;$('pushPoints').value=.5;renderAdminGames();renderDemoPlayers();return;}
+  if(state.demo){$('globalMinPicks').value=10;$('globalMaxPicks').value=10;$('pushPoints').value=0;renderAdminGames();renderDemoPlayers();return;}
   const {data:ss}=await sb.from('season_settings').select('*').eq('season_id',state.currentSeason.id).maybeSingle();
-  if(ss){$('globalMinPicks').value=ss.max_picks||ss.min_picks||10;$('globalMaxPicks').value=ss.max_picks||ss.min_picks||10;$('pushPoints').value=ss.push_points??.5;$('registrationOpen').checked=ss.registration_open;$('commissionerMessage').value=ss.commissioner_message||'';}
+  if(ss){$('globalMinPicks').value=ss.max_picks||ss.min_picks||10;$('globalMaxPicks').value=ss.max_picks||ss.min_picks||10;$('pushPoints').value=ss.push_points??0;$('registrationOpen').checked=ss.registration_open;$('commissionerMessage').value=ss.commissioner_message||'';}
   await loadWeekOverride();renderAdminGames();await loadAdminPlayers();
 }
 async function loadWeekOverride(){

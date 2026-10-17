@@ -994,3 +994,23 @@ body{background:radial-gradient(circle at 20% 0,rgba(19,76,57,.55),transparent 3
 #homePage .home-hero-copy{background:rgba(3,15,12,.88)!important;backdrop-filter:none!important}
 #picksPage .football-banner{background-image:url('gridiron-lines-banner-v14.jpg')!important;background-size:cover!important;background-position:center center!important;opacity:1!important;filter:none!important}
 #picksPage .football-banner::before,#picksPage .football-banner::after{display:none!important}
+
+
+/* GRIDIRON LINES v1.5 — pure artwork + live data dashboard */
+#homePage .gridiron-brand-hero,#picksPage .football-banner{
+  background-image:url('gridiron-lines-live-hero.jpg')!important;
+  background-size:cover!important;background-position:center center!important;
+  min-height:260px!important;opacity:1!important;filter:none!important;border:1px solid var(--line);
+}
+#homePage .gridiron-brand-hero{padding:0!important}
+#homePage .home-hero-copy{display:none!important}
+.live-dashboard{display:grid;grid-template-columns:1.15fr .8fr 1fr;gap:12px;margin:12px 0 18px}
+.live-tile{background:linear-gradient(145deg,rgba(8,31,27,.98),rgba(5,21,25,.98));border:1px solid #31584f;border-radius:13px;padding:16px 18px;min-height:140px;box-shadow:0 12px 28px rgba(0,0,0,.18)}
+.live-tile-title{font-family:inherit;font-weight:1000;letter-spacing:.05em;color:#f1f4ef;font-size:1rem;margin-bottom:14px}.live-tile-title:first-letter{color:var(--accent)}
+.live-card-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}.live-card-row>div{display:flex;align-items:baseline;gap:7px}.live-card-row strong{font-size:1.65rem}.live-card-row span{color:var(--muted)}
+.countdown-grid,.record-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.countdown-grid>div,.record-grid>div{display:grid;place-items:center;padding:9px 5px;border-right:1px solid #35524c}.countdown-grid>div{border:1px solid #35524c;border-radius:9px}.countdown-grid strong,.record-grid strong{font-size:1.35rem}.countdown-grid span,.record-grid span,.points-block span{font-size:.66rem;color:#c8d5d1;font-weight:800}.live-tile>small{display:block;text-align:center;color:#d6e0dd;margin-top:8px}
+.season-live{display:flex;align-items:stretch}.season-live .record-grid{flex:1;grid-template-columns:repeat(3,1fr)}.points-block{min-width:105px;display:grid;place-items:center;border-left:1px solid #35524c}.points-block strong{font-size:1.55rem}.points-block small{color:var(--muted);font-size:.72rem}
+.live-standings{display:grid;gap:6px}.live-standing-row{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(49,88,79,.55)}.live-standing-row:last-child{border-bottom:0}.live-standing-row b{color:var(--accent)}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);height:calc(100% - 28px)}.how-grid>div{display:grid;align-content:center;text-align:center;padding:4px 12px;border-right:1px solid #35524c}.how-grid>div:last-child{border-right:0}.how-grid strong{color:var(--accent);font-size:1.05rem}.how-grid span{font-size:.76rem;color:#d7e1de;margin-top:6px}
+@media(max-width:900px){.live-dashboard{grid-template-columns:1fr 1fr}.live-tile{min-height:130px}}
+@media(max-width:620px){#homePage .gridiron-brand-hero,#picksPage .football-banner{min-height:170px!important}.live-dashboard{grid-template-columns:1fr}.live-card-row{align-items:flex-start;flex-direction:column}.live-card-row .primary{width:100%}.live-tile{min-height:auto}.countdown-grid strong,.record-grid strong{font-size:1.15rem}}

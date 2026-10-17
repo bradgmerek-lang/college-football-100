@@ -733,6 +733,9 @@ async function renderHome(){
   const msg=state.seasonSettings?.commissioner_message?.trim();$('homeMessage').hidden=!msg;$('homeMessage').innerHTML=msg?`<strong>Commissioner message</strong><span>${escapeHtml(msg)}</span>`:'';
   $('homeMakePicks').textContent=picked===goal?'Review My Card':"Make This Week's Picks";
   await loadHomeLeaders();
+  paintLiveDashboard(score,goal,picked);
+  await loadLivePreviousWeek();
+  ensureGridironLiveTimer();
   $('homeCommissionerPanel').hidden=state.profile?.role!=='commissioner';
   if(state.profile?.role==='commissioner')$('homeCommissionerStats').innerHTML=`<div><strong>${state.games.length}</strong><span>games loaded</span></div><div><strong>${goal}</strong><span>required picks</span></div><div><strong>${state.standings.length}</strong><span>players</span></div>`;
 }

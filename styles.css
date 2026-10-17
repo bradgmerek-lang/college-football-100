@@ -1014,3 +1014,9 @@ body{background:radial-gradient(circle at 20% 0,rgba(19,76,57,.55),transparent 3
 .how-grid{display:grid;grid-template-columns:repeat(3,1fr);height:calc(100% - 28px)}.how-grid>div{display:grid;align-content:center;text-align:center;padding:4px 12px;border-right:1px solid #35524c}.how-grid>div:last-child{border-right:0}.how-grid strong{color:var(--accent);font-size:1.05rem}.how-grid span{font-size:.76rem;color:#d7e1de;margin-top:6px}
 @media(max-width:900px){.live-dashboard{grid-template-columns:1fr 1fr}.live-tile{min-height:130px}}
 @media(max-width:620px){#homePage .gridiron-brand-hero,#picksPage .football-banner{min-height:170px!important}.live-dashboard{grid-template-columns:1fr}.live-card-row{align-items:flex-start;flex-direction:column}.live-card-row .primary{width:100%}.live-tile{min-height:auto}.countdown-grid strong,.record-grid strong{font-size:1.15rem}}
+
+/* GRIDIRON LINES v1.6 */
+#homePage .gridiron-brand-hero,#picksPage .football-banner{background-image:url('gridiron-lines-clean-hero.jpg?v=1.6')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;opacity:1!important;filter:none!important}
+#homePage .gridiron-brand-hero{min-height:245px!important;aspect-ratio:1738/247;padding:0!important}
+#picksPage .football-banner{min-height:0!important;height:auto!important;aspect-ratio:1738/247!important}
+@media(max-width:620px){#homePage .gridiron-brand-hero,#picksPage .football-banner{min-height:120px!important;aspect-ratio:1738/247!important;background-size:cover!important}}
